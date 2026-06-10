@@ -1,0 +1,6 @@
+{
+  "name": "KEI-AL Auditing",
+  "description": "Bilingual website for KEI-AL Auditing – Albanian financial services firm based in Vlorë, offering audits, accounting, payroll, and tax services.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

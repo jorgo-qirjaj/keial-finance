@@ -34,17 +34,17 @@ export const translations = {
       infoNIPT: "NIPT: L37023201C · Rregulluar & Licencuar",
       pillars: [
         {
-          icon: "🏛️",
+          icon: "shield",
           title: "E Licencuar & e Rregulluar",
           description: "Firma operon plotësisht konform legjislacionit shqiptar me licencë zyrtare të auditimit ligjor."
         },
         {
-          icon: "🌍",
+          icon: "globe",
           title: "Standarde Ndërkombëtare",
           description: "Kryejmë auditime sipas Standardeve ISA dhe raportime sipas SNRF (IFRS) dhe SKK vjetore."
         },
         {
-          icon: "🤝",
+          icon: "handshake",
           title: "Premtim Besueshmërie",
           description: "Zgjedhim konfidencialitetin rigoroz, profesionalizmin dhe komunikimin transparent me çdo klient."
         }
@@ -57,7 +57,7 @@ export const translations = {
       items: [
         {
           id: "accounting",
-          icon: "📊",
+          icon: "bar-chart",
           num: "01",
           title: "Konsulencë Kontabël",
           description: "Mbajtja e plotë e kontabilitetit profesional dhe përgatitja e pasqyrave financiare në përputhje me Standardet Kombëtare të Kontabilitetit (SKK) dhe SNRF.",
@@ -70,7 +70,7 @@ export const translations = {
         },
         {
           id: "audit",
-          icon: "🔍",
+          icon: "search",
           num: "02",
           title: "Auditim Ligjor & i Brendshëm",
           description: "Auditime të pavarura dhe rigoroze të pasqyrave financiare për kompani private, organizata (OJQ) dhe ndërmarrje publike sipas standardeve ISA.",
@@ -83,7 +83,7 @@ export const translations = {
         },
         {
           id: "payroll",
-          icon: "👥",
+          icon: "users",
           num: "03",
           title: "Shërbime për Pagat & HR",
           description: "Menaxhimi i plotë i listëpagesave, llogaritjes së kontributeve të sigurimeve, dhe deklarimeve zyrtare pa asnjë gabim ose vonesë.",
@@ -96,7 +96,7 @@ export const translations = {
         },
         {
           id: "tax",
-          icon: "🧾",
+          icon: "receipt",
           num: "04",
           title: "Tatime & Këshillim Fiskal",
           description: "Planifikim dhe deklarim tatimor i saktë për TVSH-në, tatim-fitimin, TAP-in dhe taksat vendore, duke minimizuar rreziqet e penaliteteve.",
@@ -109,7 +109,7 @@ export const translations = {
         },
         {
           id: "other",
-          icon: "💼",
+          icon: "briefcase",
           num: "05",
           title: "Këshillim Biznesi & Ekspertizë Gjyqësore",
           description: "Mbështetje strategjike për hapjen e bizneseve, hartimin e planeve të biznesit dhe vlerësimin e rreziqeve ekonomike.",
@@ -129,51 +129,51 @@ export const translations = {
       items: [
         {
           id: "exp",
-          icon: "🏆",
+          icon: "award",
           title: "Mbi 10 Vjet Eksperiencë",
           description: "Themeluar në 2013-ën, ne kemi mbështetur me sukses dhjetëra biznese lokale dhe kombëtare në rritjen e tyre."
         },
         {
           id: "standards",
-          icon: "📋",
+          icon: "clipboard",
           title: "Përputhshmëri me Standardet",
           description: "Auditime krejtësisht konform Standardeve Ndërkombëtare ISA dhe ligjit shqiptar për audituesit e ligjshëm."
         },
         {
           id: "sec",
-          icon: "🔒",
+          icon: "lock",
           title: "Konfidencialitet i Mbrojtur",
           description: "Informacioni juaj tregtar dhe financiar mbrohet me kujdesin më të lartë, sipas rregullave strikte etike."
         },
         {
           id: "time",
-          icon: "⚡",
+          icon: "zap",
           title: "Efikasitet dhe Saktësi",
-          description: "Asnjë vonesë në kalkulime ose në dorëzimin e deklaratave. Siguri e plotë ndaj gjobave dhe penaliteteve."
+          description: "Asnjë vonesë in kalkulime ose në dorëzimin e deklaratave. Siguri e plotë ndaj gjobave dhe penaliteteve."
         },
         {
           id: "place",
-          icon: "🗺️",
+          icon: "map",
           title: "Prezencë Lokale & Kombëtare",
           description: "Me qendër kryesore në Vlorë, ne mbulojmë shërbimet tona për klientë në të gjithë Shqipërinë."
         },
         {
           id: "tailor",
-          icon: "💡",
+          icon: "lightbulb",
           title: "Zgjidhje të Adaptuara",
           description: "Nuk ekziston një recetë e vetme. Çdo paketë shërbimi pershtatet posaçërisht për madhësinë dhe sektorin e biznesit tuaj."
         },
         {
           id: "bilingual",
-          icon: "🌐",
+          icon: "globe",
           title: "Bilingual (AL/EN)",
           description: "Ofrojmë raporte, deklarata dhe komunikime të dyanshme si në shqip ashtu edhe në anglisht për partnerët tuaj të huaj."
         },
         {
           id: "support",
-          icon: "📞",
+          icon: "phone",
           title: "Mbështetje 365 Ditë",
-          description: "Nuk kufizohemi vetëm në mbylljen e bilanceve. Ju mbështesim me këshillim proaktiv përgjatë gjithë vitit."
+          description: "Nuk kufizohemi vetëm në mbylljen e bilanceve. Ju mbështesim med këshillim proaktiv përgjatë gjithë vitit."
         }
       ]
     },
@@ -251,7 +251,7 @@ export const translations = {
       about: "About Us",
       services: "Services",
       whyUs: "Why Us",
-      tools: "Calculator & Resources",
+      tools: "Calculator & Checklist",
       contact: "Contact",
       cta: "Contact Us"
     },
@@ -259,231 +259,231 @@ export const translations = {
       badge: "Vlorë, Albania · Active since 2013",
       title1: "Financial Expertise",
       titleAccent: "that Builds Trust",
-      sub: "Legal auditing, certified accounting, and strategic financial advisory for corporate clients in Albania. Operating per high international ISA and IFRS standards.",
+      sub: "Legal auditing, certified accounting, and strategic financial advisory for businesses in Albania. Operating in strict accordance with international standards (ISA and IFRS).",
       ctaPrimary: "Contact Us",
       ctaSecondary: "Our Services",
       statYears: "Years of Experience",
-      statServices: "Service Sectors",
+      statServices: "Service Practice Areas",
       statStandards: "ISA & IFRS Compliant"
     },
     about: {
       tag: "About Us",
       title: "Trusted Partners for Your Growth",
-      sub: "Established in 2013 in Vlorë, KEI-AL Auditing has forged a solid reputation in the Albanian corporate ecosystem. Led by Arqile Mishtaku, we seamlessly combine global financial compliance models with in-depth local legislative insights to bring certainty and resilience to your operations.",
+      sub: "Established in 2013 in Vlorë, KEI-AL Auditing has built a strong reputation in the Albanian market. Led by Arqile Mishtaku, we combine high international standards with deep insights into local legislation to provide you with maximum financial security.",
       foundedLabel: "Year Established",
       infoNIPT: "NIPT: L37023201C · Fully Licensed & Regulated",
       pillars: [
         {
-          icon: "🏛️",
+          icon: "shield",
           title: "Licensed & Regulated",
-          description: "The firm operates under strict Albanian business license mandates for statutory legal audit operations."
+          description: "The firm is fully licensed and operates in strict compliance with Albanian legislation for statutory legal audits."
         },
         {
-          icon: "🌍",
+          icon: "globe",
           title: "International Standards",
-          description: "All legal audits are aligned with International Standards on Auditing (ISA) and IFRS reports."
+          description: "We conduct audits in accordance with International Standards on Auditing (ISA) and report under IFRS / National Accounting Standards."
         },
         {
-          icon: "🤝",
-          title: "Pledge of Integrity",
-          description: "We are committed to absolute data confidentiality, ethical precision, and transparent relations."
+          icon: "handshake",
+          title: "Professional Integrity",
+          description: "We guarantee rigorous confidentiality, exceptional professionalism, and transparent communication with every client."
         }
       ]
     },
     services: {
       tag: "Our Services",
-      title: "Corporate Accounting & Expert Audit",
-      sub: "Five distinct areas of specialization structured to secure complete legal filing compliance and operational tax optimization.",
+      title: "Expert Financial & Auditing Solutions",
+      sub: "Five core areas of service, designed to ensure full legal compliance and optimize your business resources.",
       items: [
         {
           id: "accounting",
-          icon: "📊",
+          icon: "bar-chart",
           num: "01",
-          title: "Accounting & Certified Advisory",
-          description: "Comprehensive double-entry bookkeeping, general ledger administration, and annual reporting compliant with National Accounting Standards (SKK) & IFRS.",
+          title: "Accounting & Bookkeeping",
+          description: "Professional bookkeeping and annual financial statement preparation in accordance with National Accounting Standards (SKK) and IFRS.",
           points: [
-            "Continuous transactions logging and sub-ledger accounting",
-            "Filing of standard annual financial statements & disclosures",
-            "Corporate performance reporting & profitability reviews",
-            "Advisory on account reconstruction and internal systems setup"
+            "Regular bookkeeping and double-entry accounting",
+            "Preparation of annual financial statements and disclosures",
+            "Financial performance analysis and reporting",
+            "Assistance with account reconstruction and financial systems"
           ]
         },
         {
           id: "audit",
-          icon: "🔍",
+          icon: "search",
           num: "02",
-          title: "Statutory & Internal Audit",
-          description: "Rigorous and objective independent legal audits of statements for corporations, NGOs, and public sector organizations under strict ISA conventions.",
+          title: "Statutory & Internal Auditing",
+          description: "Independent and rigorous audits of financial statements for private companies, non-profit organizations (NGOs), and public enterprises under ISA.",
           points: [
-            "Independent external legal auditing for annual balance sheets",
-            "Internal audit diagnostic reviews and key control tests",
-            "Review of mid-term and interim financial information",
-            "Certified opinion delivery for shareholders, partners, and banks"
+            "Statutory external audit of annual financial statements",
+            "Internal audits and evaluation of internal control systems",
+            "Review of interim financial information",
+            "Providing certified independent opinions for shareholders and banks"
           ]
         },
         {
           id: "payroll",
-          icon: "👥",
+          icon: "users",
           num: "03",
-          title: "Payroll Management & HR",
-          description: "Complete handling of corporate payroll databases, employee declarations, social insurance computations, and compliance filings with no clerical errors.",
+          title: "Payroll & HR Services",
+          description: "Full management of payroll, social security contributions, and official declarations without errors or delays.",
           points: [
-            "Monthly payroll processing and pay-slip distribution",
-            "Social, health, and pension insurance calculations",
-            "Official state registration of hires, job changes, and terminations",
-            "Advisory on employment contract conditions and labor laws"
+            "Monthly payroll preparation and pay-slip processing",
+            "Social security and health insurance declarations",
+            "Official declarations for hiring, job changes, and employment terminations",
+            "Assistance with employment contracts and labor legislation compliance"
           ]
         },
         {
           id: "tax",
-          icon: "🧾",
+          icon: "receipt",
           num: "04",
-          title: "Corporate Tax & Fiscal Filing",
-          description: "Proactive planning and filing of monthly VAT reports, corporate income tax (tatim-fitimi), employee withholding tax, and local municipal duties.",
+          title: "Tax & Fiscal Advisory",
+          description: "Accurate tax planning and declaration of VAT, corporate income tax, withholding taxes, and local duties, minimizing compliance risks.",
           points: [
-            "Monthly VAT declaration & sales/purchase ledger reconciliation",
-            "Preparation of annual corporate profit tax returns",
-            "Direct legal representation during government fiscal audits",
-            "Authorized Fiscal Representation for non-resident multinationals"
+            "Monthly VAT declarations, purchase/sales ledgers filings",
+            "Preparation of annual corporate tax declarations",
+            "Advisory and support during tax controls and audits",
+            "Fiscal representation services for non-resident foreign companies"
           ]
         },
         {
           id: "other",
-          icon: "💼",
+          icon: "briefcase",
           num: "05",
-          title: "Business Consulting & Forensic Accounting",
-          description: "High-value business strategy advice, feasibility evaluations, startup legal structuring, and expert accounting opinions for judicial processes.",
+          title: "Business Advisory & Judicial Expertise",
+          description: "Strategic support for business startups, business plan writing, risk analysis, and forensic accounting reports.",
           points: [
-            "Business development planning & commercial feasibility assessments",
-            "Forensic accounting valuations for court and legal arbitrations",
-            "Assistance and structuring for corporate liquidation tracks",
-            "Capital structuring advise and corporate partnerships layouts"
+            "Drafting of business plans and feasibility studies",
+            "Financial and accounting expertise reports for court proceedings",
+            "Support and advisory during corporate liquidation processes",
+            "Advisory on capital restructuring and business agreements"
           ]
         }
       ]
     },
     whyUs: {
       tag: "Why Choose KEI-AL?",
-      title: "Exceptional Integrity, Proven Impact",
-      sub: "We believe robust corporate growth is anchored on sound accounting guidance, absolute confidentiality, and rapid execution. Here's why leading enterprises partner with us.",
+      title: "High Standards, Solid Ground",
+      sub: "We believe a solid financial partnership is built on accuracy, transparency, and absolute confidentiality. Here is why businesses trust us.",
       items: [
         {
           id: "exp",
-          icon: "🏆",
-          title: "10+ Years of Excellence",
-          description: "Since 2013, we represent an unwavering pillar of stability for dozens of SME clients and state organisations."
+          icon: "award",
+          title: "Over 10 Years of Experience",
+          description: "Established in 2013, we have successfully assisted dozens of local and national businesses in their growth."
         },
         {
           id: "standards",
-          icon: "📋",
-          title: "Rigorous ISA Compliance",
-          description: "All audits adhere precisely to the latest revisions of the International Standards on Auditing (ISA)."
+          icon: "clipboard",
+          title: "Compliance with Standards",
+          description: "Our audits are executed fully in accordance with International Standards on Auditing (ISA) and local laws."
         },
         {
           id: "sec",
-          icon: "🔒",
-          title: "Guaranteed Confidentiality",
-          description: "Your financial data and business blueprints are shielded under strict, secure nondisclosure parameters."
+          icon: "lock",
+          title: "Rigorous Confidentiality",
+          description: "Your commercial and financial information is protected with the highest level of confidentiality and care."
         },
         {
           id: "time",
-          icon: "⚡",
-          title: "On-Time execution",
-          description: "Zero processing backlogs. We keep your fiscal calendars fully tracked, protecting you from tax audits penalties."
+          icon: "zap",
+          title: "Efficiency and Accuracy",
+          description: "No delays in calculations or filing submissions. Complete security against penalties and audits."
         },
         {
           id: "place",
-          icon: "🗺️",
-          title: "National Coverage",
-          description: "With corporate headquarters based in Vlorë, we serve dynamic business partners operating across all of Albania."
+          icon: "map",
+          title: "Local & National Presence",
+          description: "Headquartered in Vlorë, we provide our services to clients all across Albania."
         },
         {
           id: "tailor",
-          icon: "💡",
-          title: "Customized Service Packs",
-          description: "No generic templates. Service scopes are specifically scaled to match your precise sector and financial volume."
+          icon: "lightbulb",
+          title: "Tailored Solutions",
+          description: "Every service package is customized to meet the size and specific sector of your business."
         },
         {
           id: "bilingual",
-          icon: "🌐",
-          title: "Dual Language Delivery",
-          description: "Reports, meetings, and financial summaries are available in either English or Albanian for your international partners."
+          icon: "globe",
+          title: "Bilingual Services (AL/EN)",
+          description: "We provide bilingual reporting, financial statements, and correspondence in Albanian and English."
         },
         {
           id: "support",
-          icon: "📞",
-          title: "Constant Professional Access",
-          description: "We are your year-round financial guides, ready to consult on strategic opportunities and legislative shifts."
+          icon: "phone",
+          title: "Year-Round Support",
+          description: "We provide ongoing, proactive advisory and support throughout the entire year."
         }
       ]
     },
     tools: {
       tag: "Resources & Advisory Tools",
-      title: "Tailored to Albanian Compliance",
-      sub: "Equip your business with quick answers to fiscal timelines and compute initial payroll deductions or dividend distributions on-the-fly.",
-      calcTitle: "Simplified Fiscal Estimation Tool 2026",
-      calcDesc: "Estimate social insurance obligations or corporate dividend distributions under the latest tax parameters applicable in Albania.",
-      selectType: "Choose Calculation Category:",
-      typeSalary: "Payroll Contributions (Employer/Employee & Tax)",
-      typeDividend: "Dividend Tax Distribution",
-      salaryLabel: "Monthly Gross Base Salary (ALL):",
-      dividendLabel: "Distributed Gross Profits Dividend (ALL):",
-      calcBtn: "Calculate Valuation",
-      resultTitle: "Estimated Valuation:",
+      title: "Designed for Albanian Businesses",
+      sub: "Understand your tax obligations and perform initial estimates before consulting with our experts.",
+      calcTitle: "Simplified Tax & Salary Calculator 2026",
+      calcDesc: "Calculate approximate social security contributions, salary taxes, or dividend tax under current Albanian rates.",
+      selectType: "Select Calculation Type:",
+      typeSalary: "Salary Contributions (Social Security & PAYE)",
+      typeDividend: "Dividend Tax",
+      salaryLabel: "Monthly Gross Salary (ALL):",
+      dividendLabel: "Distributed Dividend (ALL):",
+      calcBtn: "Calculate",
+      resultTitle: "Calculated Summary:",
       resSocialEmp: "Social Security (Employer - 15%):",
       resSocialWork: "Social Security (Employee - 9.5%):",
       resHealthEmp: "Health Insurance (Employer - 1.7%):",
       resHealthWork: "Health Insurance (Employee - 1.7%):",
-      resTax: "Withholding Value-added Wage Tax (TAP):",
-      resTotalDeductions: "Employee Total Deductions:",
-      resNetSalary: "Estimated Take-Home Net Salary:",
-      resDivTax: "Dividend Tax (8% rate):",
-      resDivNet: "Net Divestment Payout:",
-      disclaimer: "*This tool provides simplified estimations. Official calculations require adjusting for the national ceiling caps and dynamic tax brackets. Contact us directly for a comprehensive payroll sheet layout.",
-      checkpointsTitle: "Essential Compliance Timeline",
-      checkpointsDesc: "Ensure your commercial entity complies with basic recurring filing limits in Albania:",
+      resTax: "Income Tax on Salary (PAYE/TAP):",
+      resTotalDeductions: "Total Contributions (Employee):",
+      resNetSalary: "Approximate Net Salary:",
+      resDivTax: "Dividend Tax (8%):",
+      resDivNet: "Net Dividend Payout:",
+      disclaimer: "*This is a simplified reference calculation. For detailed calculations and special cases (e.g. salaries above maximum cap, special statuses), please contact us directly.",
+      checkpointsTitle: "Legal Compliance Checklist",
+      checkpointsDesc: "Ensure your business complies with key tax and legal deadlines in Albania for 2026:",
       checkpoints: [
-        { title: "VAT Ledgers Submission", text: "Due by the 14th of every following month via the central e-Albania platform logs." },
-        { title: "Annual Financial Statement Ledger", text: "Must be officially compiled and reported to QKB and tax offices before July 31st." },
-        { title: "E-Insurance Declarations", text: "Must be completed and settled online by the 20th of each following calendar month." },
-        { title: "Quarterly Profitable Pre-tax payments", text: "Settled in recurring slots based on corporate performance parameters assigned." }
+        { title: "VAT Books Declaration", text: "Submitted monthly by the 14th of the following month via the e-Albania portal." },
+        { title: "Annual Balance Sheet (Financial Statements)", text: "Officially submitted to the NBC (QKB) and Tax Administration no later than July 31st." },
+        { title: "Payroll Declaration (E-Sig)", text: "Submitted by the 20th of each following month, along with corresponding social security payments." },
+        { title: "Income Tax (Advance Payments)", text: "Installment payments made in accordance with the annual tax notification." }
       ]
     },
     contact: {
-      tag: "Connect with Our Office",
-      title: "Book a Complimentary Consult Session",
-      sub: "Our specialists are ready to analyze your financial parameters and engineer a robust action plan for optimization.",
-      addressLabel: "Headquarters",
+      tag: "Contact Us",
+      title: "Write to Us for a Free Consultation",
+      sub: "Our team is ready to listen to your financial needs and propose the optimal solutions.",
+      addressLabel: "Office Address",
       addressText: "Lagjja 29 Nëntori, Pallati 455, Ap.3, Kati 2, Vlorë, Albania",
-      phoneLabel: "Phone & WhatsApp Direct",
-      phoneText: "+355 68 209 5535 or 033 409 839",
-      emailLabel: "Electronic Mailbox",
+      phoneLabel: "Phone & WhatsApp",
+      phoneText: "+355 68 209 5535 / 033 409 839",
+      emailLabel: "Email Address",
       emailText: "info@keialauditing.al",
-      hoursLabel: "Operating Hours",
-      hoursText: "Monday – Friday: 09:00 AM – 05:00 PM",
-      formTitle: "Instant Callback Inquiry",
-      formName: "Full Professional Name",
+      hoursLabel: "Office Hours",
+      hoursText: "Monday – Friday: 09:00 – 17:00",
+      formTitle: "Send a Quick Message",
+      formName: "Full Name",
       formNamePh: "Your first and last name",
-      formCompany: "Enterprise Name (Optional)",
-      formCompanyPh: "Your enterprise or company business name",
-      formEmail: "Contact Email Address",
-      formEmailPh: "name@enterprise.com",
-      formService: "Target Practice Area",
-      formServicePh: "Select whichever represents your primary need",
-      formMsg: "Detailed Inquiry",
-      formMsgPh: "Detail your needs, commercial size, or ask a specific legal audit question...",
-      formSubmit: "Transmit Message",
-      formSuccess: "Thank you! Your message was submitted successfully. The KEI-AL advisory team will contact you within 24 business hours.",
-      formError: "Please write correct values into all requested fields.",
-      mapLabel: "Our Office Map Coordinates (Vlorë)",
-      whatsappAction: "Reach Us Seamlessly via WhatsApp"
+      formCompany: "Company Name (Optional)",
+      formCompanyPh: "Name of your business or company",
+      formEmail: "Email Address",
+      formEmailPh: "name@company.com",
+      formService: "Requested Service",
+      formServicePh: "Select one of our services",
+      formMsg: "Your Message or Question",
+      formMsgPh: "Provide details about your needs or specific questions...",
+      formSubmit: "Send Message",
+      formSuccess: "Thank you! Your message has been sent successfully. The KEI-AL team will contact you within 24 hours.",
+      formError: "Please fill in all required fields accurately.",
+      mapLabel: "Our Location on the Map (Vlorë)",
+      whatsappAction: "Contact us directly via WhatsApp"
     },
     footer: {
-      desc: "Licensed statutory legal auditing and accounting consulting firm based in Vlorë, Albania. Protecting and ensuring the transparency of your business since 2013.",
-      servicesTitle: "Services List",
-      linksTitle: "Helpful Navigation",
+      desc: "Professional auditing and financial consulting firm based in Vlorë. Supporting the growth and compliance of your business since 2013.",
+      servicesTitle: "Our Services",
+      linksTitle: "Quick Links",
       legalDisclaimer: "All rights reserved. KEI-AL Auditing SH.P.K. is a fully registered, licensed accounting service structure with NIPT: L37023201C.",
-      credits: "Built according to international GDPR and data security protocols."
+      credits: "Designed in accordance with data protection guidelines."
     }
   }
 };

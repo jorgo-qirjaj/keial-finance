@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, MapPin, Clock, MessageSquare, Send, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, MessageSquare, Send, CheckCircle2, AlertCircle, Facebook, Instagram } from 'lucide-react';
 import { Language, ContactFormData } from '../types';
 import { translations } from '../translations';
 
@@ -149,35 +149,39 @@ export function Contact({ language }: ContactProps) {
                 href="https://www.facebook.com/keialauditing" 
                 target="_blank" 
                 rel="noreferrer"
-                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/40 hover:border-brand-orange text-brand-dark text-xs font-bold bg-white/30 backdrop-blur-sm hover:bg-brand-orange/5 transition-all"
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/40 hover:border-brand-orange text-brand-dark text-xs font-bold bg-white/30 backdrop-blur-sm hover:bg-brand-orange/5 transition-all group"
               >
-                <span>📘 Facebook</span>
+                <Facebook className="w-4 h-4 text-brand-dark group-hover:text-brand-orange transition-colors duration-200" />
+                <span>Facebook</span>
               </a>
               <a 
                 href="https://www.instagram.com/keialauditing" 
                 target="_blank" 
                 rel="noreferrer"
-                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/40 hover:border-brand-orange text-brand-dark text-xs font-bold bg-white/30 backdrop-blur-sm hover:bg-brand-orange/5 transition-all"
+                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/40 hover:border-brand-orange text-brand-dark text-xs font-bold bg-white/30 backdrop-blur-sm hover:bg-brand-orange/5 transition-all group"
               >
-                <span>📸 Instagram</span>
+                <Instagram className="w-4 h-4 text-brand-dark group-hover:text-brand-orange transition-colors duration-200" />
+                <span>Instagram</span>
               </a>
             </div>
 
             {/* Google map iframe wrapper */}
             <div className="rounded-2xl overflow-hidden glass-card shadow-lg">
               <div className="bg-white/40 px-4 py-2 border-b border-[#E5E2DC]/50 flex items-center justify-between text-xs font-bold text-brand-text-muted backdrop-blur-sm">
-                <span>📍 {t.mapLabel}</span>
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="w-3.5 h-3.5 text-brand-orange" />
+                  <span>{t.mapLabel}</span>
+                </div>
                 <span className="w-2 h-2 rounded-full bg-brand-orange animate-pulse" />
               </div>
               <iframe
                 title="KEI-AL Auditing Office Location Map"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3056.2570081190457!2d19.493010776756858!3d40.46399197143167!2m3!1f0!2f0!3f0!3m2!1i1024!2i725!3m2!1y100!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x13453303d76e48c3%3A0xc34b6795f7ffd6ff!2sLagjja%2029%20Nentori%2C%20Vlor%C3%AB%2C%20Albania!5e0!3m2!1sen!2s!4v1717345678910!5m2!1sen!2s"
+                src="https://maps.google.com/maps?q=Lagjja%2029%20Nentori%2C%20Vlore%2C%20Albania&t=&z=16&ie=UTF8&iwloc=&output=embed"
                 width="100%"
                 height="220"
                 style={{ border: 0 }}
                 allowFullScreen={false}
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
 

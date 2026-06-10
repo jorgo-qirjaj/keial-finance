@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
-import { Award, CheckCircle2 } from 'lucide-react';
+import { Shield, Globe, Handshake } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../translations';
 import { Logo } from './Logo';
@@ -13,6 +13,19 @@ import { Logo } from './Logo';
 interface AboutProps {
   language: Language;
 }
+
+const getPillarIcon = (iconName: string) => {
+  switch (iconName) {
+    case 'shield':
+      return <Shield className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform duration-300" />;
+    case 'globe':
+      return <Globe className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform duration-300" />;
+    case 'handshake':
+      return <Handshake className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform duration-300" />;
+    default:
+      return null;
+  }
+};
 
 export function About({ language }: AboutProps) {
   const t = translations[language].about;
@@ -25,7 +38,7 @@ export function About({ language }: AboutProps) {
 
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16">
-          <span className="font-sans font-bold text-xs tracking-[0.2em] text-brand-orange uppercase mb-4">
+          <span className="font-sans font-bold text-xs tracking-[0.2em] text-brand-orange uppercase mb-4 block">
             {t.tag}
           </span>
           <h2 className="font-serif font-black text-3xl md:text-4xl lg:text-5xl text-brand-dark leading-tight tracking-tight mb-6">
@@ -47,8 +60,8 @@ export function About({ language }: AboutProps) {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="flex flex-col items-center text-center p-8 rounded-2xl glass-card border border-brand-border/40 hover:shadow-xl hover:shadow-brand-orange/5 transition-all group"
             >
-              <div className="w-16 h-16 rounded-2xl bg-white/40 backdrop-blur-sm border border-brand-border/40 flex items-center justify-center text-3xl shadow-sm text-brand-dark group-hover:scale-110 group-hover:bg-brand-orange/10 group-hover:border-brand-orange/30 transition-all duration-300 mb-6">
-                {pillar.icon}
+              <div className="w-16 h-16 rounded-2xl bg-white/40 backdrop-blur-sm border border-brand-border/40 flex items-center justify-center shadow-sm text-brand-dark group-hover:bg-brand-orange/10 group-hover:border-brand-orange/30 transition-all duration-300 mb-6">
+                {getPillarIcon(pillar.icon)}
               </div>
               <h4 className="font-sans font-bold text-lg text-brand-dark mb-3 group-hover:text-brand-orange transition-colors">
                 {pillar.title}

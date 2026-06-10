@@ -72,41 +72,45 @@ export function Tools({ language }: ToolsProps) {
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         
         {/* Section Headers */}
-        <div className="max-w-xl mb-16">
+        <div className="max-w-3xl mb-16">
           <span className="font-sans font-bold text-xs tracking-[0.2em] text-brand-orange uppercase mb-4 block">
             {t.tag}
           </span>
-          <h2 className="font-serif font-black text-3xl md:text-4xl text-brand-dark leading-tight tracking-tight mb-4">
+          <h2 className="font-serif font-black text-3xl md:text-4xl lg:text-5xl text-brand-dark leading-tight tracking-tight mb-4">
             {t.title}
           </h2>
-          <p className="font-sans font-light text-base text-brand-text-muted leading-relaxed">
+          <p className="font-sans font-light text-base md:text-lg text-brand-text-muted leading-relaxed">
             {t.sub}
           </p>
         </div>
 
-        {/* Double-grid Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+        {/* 1. Large, Full-Width Calculator (12-cols or centered) */}
+        <div className="w-full glass-card rounded-3xl p-8 md:p-12 shadow-xl border border-brand-border/40 mb-16 relative overflow-hidden">
+          {/* Subtle design decor background accent */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-brand-orange/5 rounded-full filter blur-[80px] pointer-events-none" />
           
-          {/* Left Grid: Calculator Container (Cols 7) */}
-          <div className="lg:col-span-7 glass-card rounded-3xl p-6 md:p-8 shadow-xl shadow-brand-dark/5">
-            <div className="flex items-center gap-2 mb-6">
-              <Calculator className="w-5 h-5 text-brand-orange" />
-              <h3 className="font-serif font-black text-lg md:text-xl text-brand-dark">
-                {t.calcTitle}
-              </h3>
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-brand-border/40 mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange shadow-inner">
+                <Calculator className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-serif font-black text-xl md:text-2xl text-brand-dark">
+                  {t.calcTitle}
+                </h3>
+                <p className="font-sans font-light text-xs text-brand-text-muted mt-0.5">
+                  {t.calcDesc}
+                </p>
+              </div>
             </div>
-            
-            <p className="font-sans font-light text-xs md:text-sm text-brand-text-muted mb-6 leading-relaxed">
-              {t.calcDesc}
-            </p>
 
-            {/* Selector Segment Tabs */}
-            <div className="flex bg-white/40 p-1 rounded-xl mb-8 border border-[#E5E2DC]/40 backdrop-blur-sm shadow-inner">
+            {/* Selector Segment Tabs (Desktop Right, Mobile full-width) */}
+            <div className="flex bg-white/40 p-1.5 rounded-2xl border border-brand-border/30 backdrop-blur-sm shadow-inner min-w-[280px]">
               <button
                 onClick={() => setCalcType('salary')}
-                className={`flex-1 font-sans font-bold text-xs md:text-[13px] py-3 rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 font-sans font-bold text-xs py-2.5 px-4 rounded-xl transition-all cursor-pointer ${
                   calcType === 'salary'
-                    ? 'bg-white text-brand-dark shadow-sm'
+                    ? 'bg-brand-dark text-white shadow-md'
                     : 'text-brand-text-muted hover:text-brand-dark'
                 }`}
               >
@@ -114,41 +118,53 @@ export function Tools({ language }: ToolsProps) {
               </button>
               <button
                 onClick={() => setCalcType('dividend')}
-                className={`flex-1 font-sans font-bold text-xs md:text-[13px] py-3 rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 font-sans font-bold text-xs py-2.5 px-4 rounded-xl transition-all cursor-pointer ${
                   calcType === 'dividend'
-                    ? 'bg-white text-brand-dark shadow-sm'
+                    ? 'bg-brand-dark text-white shadow-md'
                     : 'text-brand-text-muted hover:text-brand-dark'
                 }`}
               >
                 {t.typeDividend}
               </button>
             </div>
+          </div>
 
-            {/* Inputs & Outputs panel */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-              
-              {/* Calculator Inputs (Left) */}
-              <div className="space-y-6">
-                <AnimatePresence mode="wait">
-                  {calcType === 'salary' ? (
-                    <motion.div
-                      key="salary-inputs"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      className="space-y-4"
-                    >
-                      <label className="font-sans font-bold text-xs text-brand-mid block">
+          {/* Interactive Calculator split screen */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+            
+            {/* Left Side: Controls (7 columns) */}
+            <div className="lg:col-span-7 space-y-8">
+              <AnimatePresence mode="wait">
+                {calcType === 'salary' ? (
+                  <motion.div
+                    key="salary-inputs"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-6"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <label className="font-sans font-bold text-sm text-brand-dark">
                         {t.salaryLabel}
                       </label>
-                      <input
-                        type="number"
-                        value={grossInput}
-                        onChange={handleGrossChange}
-                        step="5000"
-                        min="40000"
-                        className="w-full px-4 py-3 rounded-xl glass-input text-brand-dark font-sans font-semibold focus:border-brand-orange focus:bg-white outline-none shadow-sm transition-all"
-                      />
+                      
+                      <div className="relative max-w-[240px]">
+                        <input
+                          type="number"
+                          value={grossInput}
+                          onChange={handleGrossChange}
+                          step="5000"
+                          min="40000"
+                          className="w-full pl-4 pr-12 py-3 rounded-xl border border-brand-border bg-white text-brand-dark font-sans font-bold focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none shadow-sm transition-all"
+                        />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-brand-text-muted">
+                          ALL
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
                       <input
                         type="range"
                         min={40000}
@@ -156,32 +172,44 @@ export function Tools({ language }: ToolsProps) {
                         step={5000}
                         value={grossInput}
                         onChange={handleGrossChange}
-                        className="w-full accent-brand-orange cursor-pointer"
+                        className="w-full accent-brand-orange h-1.5 bg-brand-border/40 rounded-lg cursor-pointer"
                       />
-                      <div className="flex justify-between text-[10px] font-bold text-brand-text-muted">
+                      <div className="flex justify-between text-xs font-semibold text-brand-text-muted">
                         <span>Min: 40,000 ALL</span>
                         <span>Max: 300,000 ALL</span>
                       </div>
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="dividend-inputs"
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      className="space-y-4"
-                    >
-                      <label className="font-sans font-bold text-xs text-brand-mid block">
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="dividend-inputs"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-6"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <label className="font-sans font-bold text-sm text-brand-dark">
                         {t.dividendLabel}
                       </label>
-                      <input
-                        type="number"
-                        value={dividendInput}
-                        onChange={handleDividendChange}
-                        step="50000"
-                        min="50000"
-                        className="w-full px-4 py-3 rounded-xl glass-input text-brand-dark font-sans font-semibold focus:border-brand-orange focus:bg-white outline-none shadow-sm transition-all"
-                      />
+                      
+                      <div className="relative max-w-[240px]">
+                        <input
+                          type="number"
+                          value={dividendInput}
+                          onChange={handleDividendChange}
+                          step="50000"
+                          min="50000"
+                          className="w-full pl-4 pr-12 py-3 rounded-xl border border-brand-border bg-white text-brand-dark font-sans font-bold focus:border-brand-orange focus:ring-1 focus:ring-brand-orange outline-none shadow-sm transition-all"
+                        />
+                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-brand-text-muted">
+                          ALL
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
                       <input
                         type="range"
                         min={50000}
@@ -189,131 +217,138 @@ export function Tools({ language }: ToolsProps) {
                         step={50000}
                         value={dividendInput}
                         onChange={handleDividendChange}
-                        className="w-full accent-brand-purple cursor-pointer"
+                        className="w-full accent-brand-orange h-1.5 bg-brand-border/40 rounded-lg cursor-pointer"
                       />
-                      <div className="flex justify-between text-[10px] font-bold text-brand-text-muted">
+                      <div className="flex justify-between text-xs font-semibold text-brand-text-muted">
                         <span>Min: 50,000 ALL</span>
                         <span>Max: 10,000,000 ALL</span>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Disclaimer footnote */}
+              <div className="p-4 rounded-2xl bg-white/40 border border-brand-border/40 flex gap-3 backdrop-blur-sm shadow-sm">
+                <Info className="w-5 h-5 text-brand-orange shrink-0 mt-0.5" />
+                <p className="font-sans text-xs text-brand-text-muted leading-relaxed">
+                  {t.disclaimer}
+                </p>
               </div>
-
-              {/* Dynamic Calculations results (Right) */}
-              <div className="p-5 rounded-2xl bg-white/40 border border-[#E5E2DC]/50 backdrop-blur-md shadow-inner">
-                <h4 className="font-sans font-bold text-xs text-brand-text-muted uppercase tracking-wider mb-4 border-b border-brand-border pb-2">
-                  {t.resultTitle}
-                </h4>
-
-                <AnimatePresence mode="wait">
-                  {calcType === 'salary' ? (
-                    <motion.div 
-                      key="salary-results" 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="space-y-3 text-xs font-sans text-brand-dark"
-                    >
-                      <div className="flex justify-between">
-                        <span className="text-brand-text-muted">{t.resSocialEmp}</span>
-                        <span className="font-bold">{socialEmployer.toLocaleString()} ALL</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-brand-text-muted">{t.resSocialWork}</span>
-                        <span className="font-bold">{socialEmployee.toLocaleString()} ALL</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-brand-text-muted">{t.resHealthEmp}</span>
-                        <span className="font-bold">{healthEmployer.toLocaleString()} ALL</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-brand-text-muted">{t.resHealthWork}</span>
-                        <span className="font-bold">{healthEmployee.toLocaleString()} ALL</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-brand-text-muted">{t.resTax}</span>
-                        <span className="font-bold text-brand-orange">{tapTax.toLocaleString()} ALL</span>
-                      </div>
-                      
-                      <div className="pt-3 border-t border-brand-border/65 flex justify-between font-bold text-sm text-brand-dark">
-                        <span>{t.resNetSalary}</span>
-                        <span className="text-brand-dark font-black px-2 py-0.5 rounded bg-brand-orange/10 text-brand-orange">
-                          {estimatedNetSalary.toLocaleString()} ALL
-                        </span>
-                      </div>
-                    </motion.div>
-                  ) : (
-                    <motion.div 
-                      key="dividend-results"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="space-y-3 text-xs font-sans text-brand-dark"
-                    >
-                      <div className="flex justify-between">
-                        <span className="text-brand-text-muted">{t.dividendLabel}</span>
-                        <span className="font-bold">{dividendInput.toLocaleString()} ALL</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-brand-text-muted">{t.resDivTax}</span>
-                        <span className="font-bold text-brand-orange">{dividendTax.toLocaleString()} ALL</span>
-                      </div>
-
-                      <div className="pt-3 border-t border-brand-border/65 flex justify-between font-bold text-sm text-brand-dark">
-                        <span>{t.resDivNet}</span>
-                        <span className="text-brand-dark font-black px-2 py-0.5 rounded bg-brand-purple/10 text-brand-purple">
-                          {netDividendPayout.toLocaleString()} ALL
-                        </span>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
             </div>
 
-            {/* Disclaimer disclaimer footnote */}
-            <div className="mt-8 p-3 rounded-xl bg-white/30 border border-[#E5E2DC]/30 flex gap-2 backdrop-blur-sm">
-              <Info className="w-4 h-4 text-brand-text-muted shrink-0 mt-0.5" />
-              <p className="font-sans text-[11px] text-brand-text-muted leading-relaxed">
-                {t.disclaimer}
-              </p>
+            {/* Right Side: Calculated Dashboard (5 columns) */}
+            <div className="lg:col-span-5 p-6 md:p-8 rounded-2xl bg-white/40 border border-brand-border/40 backdrop-blur-md shadow-inner">
+              <h4 className="font-sans font-bold text-xs text-brand-text-muted uppercase tracking-widest mb-6 border-b border-brand-border pb-3">
+                {t.resultTitle}
+              </h4>
+
+              <AnimatePresence mode="wait">
+                {calcType === 'salary' ? (
+                  <motion.div 
+                    key="salary-results" 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-4 text-sm font-sans text-brand-dark"
+                  >
+                    <div className="flex justify-between items-center py-1.5 border-b border-brand-border/40">
+                      <span className="text-brand-text-muted text-xs">{t.resSocialEmp}</span>
+                      <span className="font-semibold text-brand-dark">{socialEmployer.toLocaleString()} ALL</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-brand-border/40">
+                      <span className="text-brand-text-muted text-xs">{t.resSocialWork}</span>
+                      <span className="font-semibold text-brand-dark">{socialEmployee.toLocaleString()} ALL</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-brand-border/40">
+                      <span className="text-brand-text-muted text-xs">{t.resHealthEmp}</span>
+                      <span className="font-semibold text-brand-dark">{healthEmployer.toLocaleString()} ALL</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-brand-border/40">
+                      <span className="text-brand-text-muted text-xs">{t.resHealthWork}</span>
+                      <span className="font-semibold text-brand-dark">{healthEmployee.toLocaleString()} ALL</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-brand-border/40">
+                      <span className="text-brand-text-muted text-xs">{t.resTax}</span>
+                      <span className="font-semibold text-brand-orange">{tapTax.toLocaleString()} ALL</span>
+                    </div>
+                    
+                    <div className="pt-6 mt-4 flex flex-col gap-2">
+                      <span className="text-xs font-bold text-brand-text-muted uppercase tracking-wider">{t.resNetSalary}</span>
+                      <span className="text-2xl md:text-3xl font-black text-brand-orange leading-none">
+                        {estimatedNetSalary.toLocaleString()} ALL
+                      </span>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    key="dividend-results"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-4 text-sm font-sans text-brand-dark"
+                  >
+                    <div className="flex justify-between items-center py-1.5 border-b border-brand-border/40">
+                      <span className="text-brand-text-muted text-xs">{t.dividendLabel}</span>
+                      <span className="font-semibold text-brand-dark">{dividendInput.toLocaleString()} ALL</span>
+                    </div>
+                    <div className="flex justify-between items-center py-1.5 border-b border-brand-border/40">
+                      <span className="text-brand-text-muted text-xs">{t.resDivTax}</span>
+                      <span className="font-semibold text-brand-orange">{dividendTax.toLocaleString()} ALL</span>
+                    </div>
+
+                    <div className="pt-6 mt-4 flex flex-col gap-2">
+                      <span className="text-xs font-bold text-brand-text-muted uppercase tracking-wider">{t.resDivNet}</span>
+                      <span className="text-2xl md:text-3xl font-black text-brand-orange leading-none">
+                        {netDividendPayout.toLocaleString()} ALL
+                      </span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
+            
           </div>
+        </div>
 
-          {/* Right Grid: Compliance Timelines (Cols 5) */}
-          <div className="lg:col-span-5 glass-card rounded-3xl p-6 md:p-8 shadow-xl shadow-brand-dark/5">
-            <div className="flex items-center gap-2 mb-6">
-              <Calendar className="w-5 h-5 text-brand-purple" />
+        {/* 2. Smaller, Horizontal Compliance Timeline Grid below Calculator */}
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-brand-orange/10 flex items-center justify-center text-brand-orange shadow-inner">
+                <Calendar className="w-4 h-4" />
+              </div>
               <h3 className="font-serif font-black text-lg md:text-xl text-brand-dark">
                 {t.checkpointsTitle}
               </h3>
             </div>
-            
-            <p className="font-sans font-light text-xs md:text-sm text-brand-text-muted mb-8 leading-relaxed">
+            <p className="font-sans font-light text-xs md:text-sm text-brand-text-muted max-w-md">
               {t.checkpointsDesc}
             </p>
-
-            <div className="space-y-6">
-              {t.checkpoints.map((cp, idx) => (
-                <div key={idx} className="flex gap-4 items-start pb-5 border-b border-brand-light last:border-0 last:pb-0">
-                  <div className="w-8 h-8 rounded-lg bg-brand-purple/10 border border-brand-purple/20 text-brand-purple flex items-center justify-center shrink-0">
-                    <CheckSquare className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h5 className="font-sans font-bold text-[14px] text-brand-dark mb-1">
-                      {cp.title}
-                    </h5>
-                    <p className="font-sans font-light text-xs text-brand-text-muted leading-relaxed">
-                      {cp.text}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {t.checkpoints.map((cp, idx) => (
+              <div 
+                key={idx} 
+                className="glass-card rounded-2xl p-6 border border-brand-border/30 hover:shadow-lg hover:border-brand-orange/30 transition-all group relative overflow-hidden"
+              >
+                {/* Subtle continuous indicator tag */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-brand-orange/30 to-brand-orange opacity-0 group-hover:opacity-100 transition-opacity" />
+                
+                <div className="w-9 h-9 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-brand-orange flex items-center justify-center shrink-0 mb-4 shadow-inner group-hover:scale-110 transition-transform duration-300">
+                  <CheckSquare className="w-4.5 h-4.5" />
+                </div>
+                
+                <h5 className="font-sans font-bold text-sm text-brand-dark mb-2 group-hover:text-brand-orange transition-colors">
+                  {cp.title}
+                </h5>
+                <p className="font-sans font-light text-xs text-brand-text-muted leading-relaxed">
+                  {cp.text}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
       </div>

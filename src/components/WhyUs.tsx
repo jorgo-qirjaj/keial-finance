@@ -5,8 +5,43 @@
 
 import React from 'react';
 import { motion } from 'motion/react';
+import { 
+  Award, 
+  ClipboardCheck, 
+  Lock, 
+  Zap, 
+  MapPin, 
+  Lightbulb, 
+  Globe, 
+  PhoneCall,
+  Check
+} from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../translations';
+
+const getWhyUsIcon = (iconName: string) => {
+  const normClass = "w-6 h-6 text-brand-orange group-hover:scale-110 transition-transform duration-200";
+  switch (iconName) {
+    case 'award':
+      return <Award className={normClass} />;
+    case 'clipboard':
+      return <ClipboardCheck className={normClass} />;
+    case 'lock':
+      return <Lock className={normClass} />;
+    case 'zap':
+      return <Zap className={normClass} />;
+    case 'map':
+      return <MapPin className={normClass} />;
+    case 'lightbulb':
+      return <Lightbulb className={normClass} />;
+    case 'globe':
+      return <Globe className={normClass} />;
+    case 'phone':
+      return <PhoneCall className={normClass} />;
+    default:
+      return null;
+  }
+};
 
 interface WhyUsProps {
   language: Language;
@@ -49,8 +84,8 @@ export function WhyUs({ language }: WhyUsProps) {
               className="bg-brand-dark/60 p-8 flex flex-col items-start hover:bg-brand-dark/30 transition-all group"
             >
               {/* Highlight Circle for icons */}
-              <div className="w-12 h-12 rounded-2xl bg-brand-white/5 border border-brand-white/10 flex items-center justify-center text-2xl mb-6 shadow-sm group-hover:scale-110 group-hover:border-brand-orange/30 group-hover:bg-brand-orange/5 transition-transform duration-200">
-                {benefit.icon}
+              <div className="w-12 h-12 rounded-2xl bg-brand-white/5 border border-brand-white/10 flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 group-hover:border-brand-orange/30 group-hover:bg-brand-orange/5 transition-all duration-200">
+                {getWhyUsIcon(benefit.icon)}
               </div>
 
               {/* Text */}
@@ -73,8 +108,8 @@ export function WhyUs({ language }: WhyUsProps) {
           className="mt-16 p-6 md:p-8 rounded-2xl bg-gradient-to-r from-brand-orange/15 to-brand-purple/15 backdrop-blur-lg border border-brand-orange/25 flex flex-col md:flex-row items-center justify-between gap-6"
         >
           <div className="flex items-center gap-4 text-center md:text-left flex-col md:flex-row">
-            <div className="w-12 h-12 rounded-full bg-brand-orange text-brand-white font-bold flex items-center justify-center text-xl shrink-0 shadow-lg">
-              ✓
+            <div className="w-12 h-12 rounded-full bg-brand-orange text-brand-white flex items-center justify-center shrink-0 shadow-lg">
+              <Check className="w-6 h-6" />
             </div>
             <div>
               <h5 className="font-sans font-bold text-base text-brand-white mb-1">

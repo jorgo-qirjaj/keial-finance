@@ -34,7 +34,7 @@ export function Logo({ className = '', size = 'md' }: LogoProps) {
           className={`${barWidth} rounded-t-[2px] transition-all`} 
           style={{ 
             height: isLarge ? '45px' : isSmall ? '22px' : '31.5px', 
-            backgroundColor: '#0D9488' 
+            backgroundColor: '#0F766E' 
           }} 
         />
         {/* Orange bar (Now Steel Blue) */}
@@ -42,7 +42,7 @@ export function Logo({ className = '', size = 'md' }: LogoProps) {
           className={`${barWidth} rounded-t-[2px] transition-all`} 
           style={{ 
             height: isLarge ? '36px' : isSmall ? '18px' : '25px', 
-            backgroundColor: '#0EA5E9' 
+            backgroundColor: '#1D4ED8' 
           }} 
         />
       </div>

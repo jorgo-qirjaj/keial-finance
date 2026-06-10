@@ -5,9 +5,27 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowRight, Check, X, ShieldAlert } from 'lucide-react';
+import { ArrowRight, Check, X, ShieldAlert, BarChart3, Search, Users, Receipt, Briefcase } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../translations';
+
+const getServiceIcon = (iconName: string, className?: string) => {
+  const normClass = className || "w-6 h-6";
+  switch (iconName) {
+    case 'bar-chart':
+      return <BarChart3 className={normClass} />;
+    case 'search':
+      return <Search className={normClass} />;
+    case 'users':
+      return <Users className={normClass} />;
+    case 'receipt':
+      return <Receipt className={normClass} />;
+    case 'briefcase':
+      return <Briefcase className={normClass} />;
+    default:
+      return null;
+  }
+};
 
 interface ServicesProps {
   language: Language;
@@ -69,8 +87,8 @@ export function Services({ language }: ServicesProps) {
                     <span className="font-serif font-black text-xs md:text-sm text-brand-orange tracking-wider">
                       {svc.num} —
                     </span>
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shadow-inner ${colorClass}`}>
-                      {svc.icon}
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shadow-inner ${colorClass}`}>
+                      {getServiceIcon(svc.icon, "w-6 h-6")}
                     </div>
                   </div>
 
@@ -133,8 +151,8 @@ export function Services({ language }: ServicesProps) {
                 {/* Header info */}
                 <div className="flex items-start justify-between mb-6 border-b border-brand-light pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-brand-light flex items-center justify-center text-2xl">
-                      {selectedService.icon}
+                    <div className="w-12 h-12 rounded-xl bg-brand-light flex items-center justify-center text-xl">
+                      {getServiceIcon(selectedService.icon, "w-6 h-6 text-brand-dark")}
                     </div>
                     <div>
                       <span className="font-serif text-xs font-bold text-brand-orange tracking-widest block uppercase">

@@ -5,14 +5,14 @@
   --font-serif: "Lora", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
   
-  --color-brand-orange: #0F766E; /* Deep prestigious Emerald Teal */
-  --color-brand-purple: #1D4ED8; /* Professional Trustworthy Royal Blue */
+  --color-brand-orange: #EC7A55; /* Official Vibrant Coral Orange */
+  --color-brand-purple: #3BBA74; /* Official Vibrant Emerald Green */
   --color-brand-dark: #0B1329;   /* Refined Midnight Obsidian */
   --color-brand-mid: #1E293B;    /* Slate Blue */
-  --color-brand-light: #F8FAFC;  /* Cool Ice White */
+  --color-brand-light: #FBFBFA;  /* Off-White Warm Canvas */
   --color-brand-white: #FFFFFF;
-  --color-brand-border: #E2E8F0;
-  --color-brand-text-muted: #64748B;
+  --color-brand-border: #E5E2DC;  /* Warm Light Gray */
+  --color-brand-text-muted: #6B7280;
 }
 
 @utility glass-card {
@@ -52,10 +52,10 @@ html {
 }
 
 body {
-  background-color: #F8FAFC;
+  background-color: #FBFBFA;
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(13, 148, 136, 0.05) 0%, transparent 45%),
-    radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.05) 0%, transparent 45%);
+    radial-gradient(circle at 10% 20%, rgba(59, 186, 116, 0.03) 0%, transparent 45%),
+    radial-gradient(circle at 90% 80%, rgba(236, 122, 85, 0.03) 0%, transparent 45%);
   background-attachment: fixed;
 }
 

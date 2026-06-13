@@ -123,7 +123,12 @@ export function Contact({ language }: ContactProps) {
                 <div>
                   <h4 className="font-sans font-bold text-sm text-brand-dark mb-1">{t.emailLabel}</h4>
                   <p className="font-sans font-light text-sm text-brand-text-muted select-all">
-                    {t.emailText}
+                    <a 
+                      href={`mailto:${t.emailText}`} 
+                      className="hover:text-brand-orange hover:underline transition-all duration-200"
+                    >
+                      {t.emailText}
+                    </a>
                   </p>
                 </div>
               </div>

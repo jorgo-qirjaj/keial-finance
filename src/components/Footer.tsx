@@ -33,8 +33,8 @@ export function Footer({ language, onNavigate }: FooterProps) {
               onClick={() => handleNavClick('home')} 
               className="cursor-pointer focus:outline-none p-1 rounded-lg"
             >
-              {/* Force white-friendly typography for dark footer */}
-              <Logo size="md" className="brightness-0 invert tracking-wide" />
+              {/* Support high-contrast official branding for dark footer */}
+              <Logo size="md" darkBackground={true} className="tracking-wide" />
             </button>
             <p className="font-sans font-light text-sm text-[#A0A1B9] leading-relaxed max-w-sm">
               {t.desc}

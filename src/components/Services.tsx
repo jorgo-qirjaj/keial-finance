@@ -1,5 +1,5 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { BookOpen, Briefcase, Check, FileSearch, Receipt, Users, type LucideIcon } from 'lucide-react';
 import { Language } from '../types';
 import { content } from '../content';
@@ -19,7 +19,6 @@ export function Services({ language }: { language: Language }) {
   const [activeId, setActiveId] = useState(t.items[0].id);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
   const active = t.items.find((s) => s.id === activeId) ?? t.items[0];
-  const ActiveIcon = ICONS[active.id];
 
   function onKey(e: KeyboardEvent<HTMLButtonElement>, i: number) {
     const keys: Record<string, number> = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 };
@@ -55,7 +54,7 @@ export function Services({ language }: { language: Language }) {
                 role="tab"
                 id={`tab-${s.id}`}
                 aria-selected={selected}
-                aria-controls="service-panel"
+                aria-controls={`panel-${s.id}`}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setActiveId(s.id)}
                 onKeyDown={(e) => onKey(e, i)}
@@ -77,37 +76,41 @@ export function Services({ language }: { language: Language }) {
         </div>
 
         {/* Detail panel for the selected service. */}
+        {/* Every service has its own panel in the HTML (inactive ones hidden), so search engines read all five. */}
         <Card className="min-w-0 overflow-hidden">
-          <div id="service-panel" role="tabpanel" aria-labelledby={`tab-${active.id}`} className="p-6 md:p-8">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={active.id}
-                initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduce ? { opacity: 0 } : { opacity: 0, y: -6 }}
-                transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              >
-                <div className="flex items-start gap-4">
-                  <span className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-leaf-soft text-leaf">
-                    <ActiveIcon size={22} strokeWidth={1.75} aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0">
-                    <h3 className="text-[22px] md:text-[24px] font-semibold leading-tight">{active.title}</h3>
-                    <p className="mt-2 text-[16px] text-sub">{active.description}</p>
+          {t.items.map((s) => {
+            const selected = s.id === active.id;
+            const Icon = ICONS[s.id];
+            return (
+              <div key={s.id} id={`panel-${s.id}`} role="tabpanel" aria-labelledby={`tab-${s.id}`} hidden={!selected} className="p-6 md:p-8">
+                <motion.div
+                  key={selected ? `on-${s.id}` : `off-${s.id}`}
+                  initial={reduce || !selected ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <div className="flex items-start gap-4">
+                    <span className="hidden sm:flex h-12 w-12 shrink-0 items-center justify-center rounded-[12px] bg-leaf-soft text-leaf">
+                      <Icon size={22} strokeWidth={1.75} aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <h3 className="text-[22px] md:text-[24px] font-semibold leading-tight">{s.title}</h3>
+                      <p className="mt-2 text-[16px] text-sub">{s.description}</p>
+                    </div>
                   </div>
-                </div>
 
-                <ul className="mt-7 grid gap-3 sm:grid-cols-2">
-                  {active.points.map((p) => (
-                    <li key={p} className="flex gap-3 rounded-[10px] bg-page px-4 py-3.5 text-[15px] leading-snug">
-                      <Check size={18} strokeWidth={2.25} className="mt-0.5 shrink-0 text-leaf" aria-hidden="true" />
-                      <span>{p}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+                  <ul className="mt-7 grid gap-3 sm:grid-cols-2">
+                    {s.points.map((p) => (
+                      <li key={p} className="flex gap-3 rounded-[10px] bg-page px-4 py-3.5 text-[15px] leading-snug">
+                        <Check size={18} strokeWidth={2.25} className="mt-0.5 shrink-0 text-leaf" aria-hidden="true" />
+                        <span>{p}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </div>
+            );
+          })}
         </Card>
       </div>
     </Section>

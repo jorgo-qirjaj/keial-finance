@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kei.al/sitemap.xml

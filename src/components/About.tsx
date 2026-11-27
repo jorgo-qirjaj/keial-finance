@@ -1,78 +1,61 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React from 'react';
-import { motion } from 'motion/react';
-import { Shield, Globe, Handshake } from 'lucide-react';
+import { Languages, Lock, Scale, ShieldCheck, type LucideIcon } from 'lucide-react';
 import { Language } from '../types';
-import { translations } from '../translations';
-import { Logo } from './Logo';
+import { content } from '../content';
+import { NIPT } from '../config';
+import { BarsMotif, Card, Section, SectionHeader } from './ui';
 
-interface AboutProps {
-  language: Language;
-}
+const ICONS: Record<string, LucideIcon> = { shield: ShieldCheck, scale: Scale, lock: Lock, languages: Languages };
 
-const getPillarIcon = (iconName: string) => {
-  switch (iconName) {
-    case 'shield':
-      return <Shield className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform duration-300" />;
-    case 'globe':
-      return <Globe className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform duration-300" />;
-    case 'handshake':
-      return <Handshake className="w-7 h-7 text-brand-orange group-hover:scale-110 transition-transform duration-300" />;
-    default:
-      return null;
-  }
-};
-
-export function About({ language }: AboutProps) {
-  const t = translations[language].about;
+export function About({ language }: { language: Language }) {
+  const t = content[language].about;
 
   return (
-    <section id="about" className="py-20 md:py-28 bg-white/10 backdrop-blur-sm border-y border-brand-border/30 relative overflow-hidden">
-      
-      {/* Dynamic Background Accents */}
-      <div className="absolute top-1/2 left-0 w-80 h-80 rounded-full bg-brand-orange/5 filter blur-[60px] pointer-events-none" />
+    <Section id="about" className="bg-white border-y border-rule">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-14">
+        <div className="min-w-0">
+          <SectionHeader title={t.title} />
+          <p className="-mt-4 max-w-[56ch] text-[17px] text-sub">{t.body}</p>
 
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16">
-          <span className="font-sans font-bold text-xs tracking-[0.2em] text-brand-orange uppercase mb-4 block">
-            {t.tag}
-          </span>
-          <h2 className="font-serif font-black text-3xl md:text-4xl lg:text-5xl text-brand-dark leading-tight tracking-tight mb-6">
-            {t.title}
-          </h2>
-          <p className="font-sans font-light text-base md:text-lg text-brand-text-muted leading-relaxed">
-            {t.sub}
-          </p>
-        </div>
-
-        {/* Pillars Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full">
-          {t.pillars.map((pillar, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="flex flex-col items-center text-center p-8 rounded-2xl glass-card border border-brand-border/40 hover:shadow-xl hover:shadow-brand-orange/5 transition-all group"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-white/40 backdrop-blur-sm border border-brand-border/40 flex items-center justify-center shadow-sm text-brand-dark group-hover:bg-brand-orange/10 group-hover:border-brand-orange/30 transition-all duration-300 mb-6">
-                {getPillarIcon(pillar.icon)}
+          {/* Firm card */}
+          <Card className="relative mt-8 overflow-hidden bg-ink text-white border-ink">
+            <BarsMotif className="pointer-events-none absolute -right-10 -top-8 w-[200px]" opacity={0.14} />
+            <div className="relative flex items-center gap-4 p-5">
+              <span aria-hidden="true" className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-white/10 text-[18px] font-semibold">
+                AM
+              </span>
+              <div className="min-w-0">
+                <p className="text-[17px] font-semibold">{t.leaderName}</p>
+                <p className="text-[14px] text-white/70">{t.leaderRole}</p>
               </div>
-              <h4 className="font-sans font-bold text-lg text-brand-dark mb-3 group-hover:text-brand-orange transition-colors">
-                {pillar.title}
-              </h4>
-              <p className="font-sans font-light text-sm text-brand-text-muted leading-relaxed">
-                {pillar.description}
-              </p>
-            </motion.div>
-          ))}
+            </div>
+            <div className="relative grid grid-cols-2 border-t border-white/10 text-[13px]">
+              <div className="p-4 pr-2">
+                <p className="text-white/55">{t.company}</p>
+              </div>
+              <div className="p-4 pl-2 text-right">
+                <p className="num text-white/80">NIPT {NIPT}</p>
+              </div>
+            </div>
+          </Card>
         </div>
+
+        <ul className="grid min-w-0 content-start gap-4 sm:grid-cols-2">
+          {t.points.map((p) => {
+            const Icon = ICONS[p.icon];
+            return (
+              <li key={p.title}>
+                <Card className="lift h-full p-5">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-soft text-ink">
+                    <Icon size={20} strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <p className="mt-4 font-semibold">{p.title}</p>
+                  <p className="mt-1 text-[15px] text-sub">{p.text}</p>
+                </Card>
+              </li>
+            );
+          })}
+        </ul>
       </div>
-    </section>
+    </Section>
   );
 }

@@ -27,13 +27,6 @@ export interface PillarItem {
   description: string;
 }
 
-export interface ContactFormData {
-  fullName: string;
-  companyName: string;
-  email: string;
-  service: string;
-  message: string;
-}
 
 export interface ArticleItem {
   id: string;

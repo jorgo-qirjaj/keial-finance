@@ -1,154 +1,75 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React from 'react';
-import { motion } from 'motion/react';
-import { Calendar, Layers, ShieldCheck, ArrowRight } from 'lucide-react';
+import { useMemo } from 'react';
+import { ArrowRight, CalendarClock, MessageCircle } from 'lucide-react';
 import { Language } from '../types';
-import { translations } from '../translations';
+import { content } from '../content';
+import { waLink, NIPT } from '../config';
+import { upcomingDeadlines } from '../lib/deadlines';
+import { BarsMotif, Container, LinkButton } from './ui';
+import { DeadlineRow } from './DeadlineRow';
 
-interface HeroProps {
-  language: Language;
-  onNavigate: (sectionId: string) => void;
-}
-
-export function Hero({ language, onNavigate }: HeroProps) {
-  const t = translations[language].hero;
-
-  const handleCtaClick = (sectionId: string) => {
-    onNavigate(sectionId);
-  };
+export function Hero({ language }: { language: Language }) {
+  const c = content[language];
+  const t = c.hero;
+  const deadlines = useMemo(() => upcomingDeadlines(c), [c]);
 
   return (
-    <section 
-      id="home"
-      className="relative min-h-screen flex items-center pt-24 pb-16 px-6 md:px-12 lg:px-24 bg-transparent overflow-hidden"
-    >
-      {/* Decorative Orbs */}
-      <div 
-        className="absolute top-[-12%] right-[-12%] w-[500px] md:w-[700px] h-[500px] md:h-[700px] rounded-full filter blur-[110px] opacity-[0.14] pointer-events-none select-none"
-        style={{ background: 'linear-gradient(135deg, #E8724A 0%, #9B6DB5 100%)' }}
-      />
-      <div 
-        className="absolute bottom-[-15%] left-[10%] w-[350px] h-[350px] rounded-full filter blur-[90px] opacity-[0.08] pointer-events-none select-none"
-        style={{ background: '#3DAA6A' }}
-      />
+    <>
+      <section id="top" className="relative overflow-hidden bg-ink text-white">
+        {/* Soft depth and the logo's three bars, kept low-contrast. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(1200px_500px_at_85%_-10%,#24345A_0%,transparent_60%),linear-gradient(180deg,#14213D_0%,#0F1A33_100%)]" />
+        <BarsMotif className="pointer-events-none absolute -right-16 -bottom-24 w-[520px] max-w-none md:right-[-40px]" opacity={0.1} />
 
-      <div className="max-w-4xl mx-auto w-full relative z-10 flex flex-col items-center text-center mt-8 md:mt-12">
-        
-        {/* Dynamic Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E8724A]/10 backdrop-blur-md border border-[#E8724A]/25 text-[#E8724A] text-xs md:text-sm font-bold tracking-wide mb-8 shadow-md"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-orange animate-pulse" />
-          <span>{t.badge}</span>
-        </motion.div>
-
-        {/* Headings */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-serif font-black text-4xl sm:text-5xl md:text-6xl text-brand-dark leading-[1.15] tracking-tight mb-6"
-        >
-          {t.title1} <br />
-          <span className="bg-gradient-to-r from-brand-orange via-[#D66AA2] to-brand-purple bg-clip-text text-transparent font-black">
-            {t.titleAccent}
-          </span>
-        </motion.h1>
-
-        {/* Subtitle description */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="font-sans font-light text-base md:text-[18px] text-brand-text-muted leading-relaxed max-w-2xl mb-10"
-        >
-          {t.sub}
-        </motion.p>
-
-        {/* Interaction CTAs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-16"
-        >
-          <button
-            onClick={() => handleCtaClick('contact')}
-            className="w-full sm:w-auto px-8 py-4 rounded-full bg-brand-dark hover:bg-brand-orange text-brand-white font-bold text-sm tracking-wide shadow-lg shadow-brand-dark/15 hover:shadow-brand-orange/20 hover:scale-[1.02] transition-all cursor-pointer flex items-center justify-center gap-2 group"
-          >
-            <span>{t.ctaPrimary}</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </button>
-          
-          <button
-            onClick={() => handleCtaClick('services')}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-full border border-[#E5E2DC]/60 hover:border-brand-orange hover:text-brand-orange text-brand-dark font-medium text-sm tracking-wide bg-white/40 backdrop-blur-md transition-all cursor-pointer shadow-sm"
-          >
-            {t.ctaSecondary}
-          </button>
-        </motion.div>
-
-        {/* Statistics highlights bar */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 w-full glass-card rounded-2xl p-6 md:p-8 shadow-xl shadow-brand-dark/5"
-        >
-          {/* Stat 1 */}
-          <div className="flex flex-col items-center sm:items-start text-center sm:text-left px-4 group">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 rounded-lg bg-brand-orange/10 text-brand-orange">
-                <Calendar className="w-4 h-4" />
-              </div>
-              <span className="font-serif font-black text-3xl text-brand-dark bg-gradient-to-r from-brand-orange to-[#D66AA2] bg-clip-text text-transparent">
-                10+
-              </span>
+        <Container className="relative grid items-center gap-12 pt-14 pb-28 md:pt-20 md:pb-36 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+          <div className="min-w-0">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[13px] text-white/80">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-leaf-bright" />
+              {t.eyebrow}
+            </p>
+            <h1 className="mt-6 text-[36px] md:text-[52px] font-semibold leading-[1.08] tracking-[-0.02em]">{t.title}</h1>
+            <p className="mt-5 max-w-[48ch] text-[17px] md:text-[18px] text-white/75">{t.sub}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <LinkButton href={waLink(c.contact.whatsappMessage)} target="_blank" rel="noreferrer" variant="light">
+                <MessageCircle size={17} strokeWidth={2} aria-hidden="true" />
+                {t.ctaPrimary}
+              </LinkButton>
+              <LinkButton href="#services" variant="ghost-light">
+                {t.ctaSecondary}
+                <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+              </LinkButton>
             </div>
-            <span className="font-sans font-medium text-[13px] text-brand-text-muted">
-              {t.statYears}
-            </span>
+            <p className="num mt-8 text-[13px] text-white/55">NIPT {NIPT}</p>
           </div>
 
-          {/* Stat 2 */}
-          <div className="flex flex-col items-center sm:items-start text-center sm:text-left px-4 sm:border-x border-brand-border/60 group">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 rounded-lg bg-brand-purple/10 text-brand-purple">
-                <Layers className="w-4 h-4" />
-              </div>
-              <span className="font-serif font-black text-3xl text-brand-dark bg-gradient-to-r from-brand-purple to-[#BF94E4] bg-clip-text text-transparent">
-                5
-              </span>
+          {/* Live widget: next filing dates, computed from today. */}
+          <div className="min-w-0 rounded-[16px] bg-white p-5 text-ink shadow-[var(--shadow-float)] md:p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-[15px] font-semibold">
+                <CalendarClock size={18} strokeWidth={1.75} className="text-leaf" aria-hidden="true" />
+                {t.deadlinesTitle}
+              </h2>
+              <a href="#deadlines" className="inline-flex items-center gap-1 text-[13px] text-sub no-underline hover:text-ink">
+                {t.deadlinesAll}
+                <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+              </a>
             </div>
-            <span className="font-sans font-medium text-[13px] text-brand-text-muted">
-              {t.statServices}
-            </span>
+            <ul className="mt-2 divide-y divide-rule">
+              {deadlines.map((d, i) => <DeadlineRow key={d.key} d={d} t={c} index={i} />)}
+            </ul>
           </div>
+        </Container>
+      </section>
 
-          {/* Stat 3 */}
-          <div className="flex flex-col items-center sm:items-start text-center sm:text-left px-4 group">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="p-1.5 rounded-lg bg-[#3DAA6A]/10 text-[#3DAA6A]">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <span className="font-serif font-black text-3xl text-brand-dark bg-gradient-to-r from-[#21c062] to-[#BFCE57] bg-clip-text text-transparent">
-                ISA / SNRF
-              </span>
-            </div>
-            <span className="font-sans font-medium text-[13px] text-brand-text-muted">
-              {t.statStandards}
-            </span>
-          </div>
-        </motion.div>
-
-      </div>
-    </section>
+      {/* Key facts, overlapping the hero edge. */}
+      <Container className="relative -mt-14 md:-mt-16">
+        <ul className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+          {c.stats.map((s) => (
+            <li key={s.label} className="rounded-[12px] border border-rule bg-white px-5 py-4 shadow-[var(--shadow-lift)]">
+              <p className="num text-[20px] md:text-[24px] font-medium text-ink">{s.value}</p>
+              <p className="mt-0.5 text-[13px] text-muted">{s.label}</p>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </>
   );
 }

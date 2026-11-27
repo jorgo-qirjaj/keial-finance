@@ -6,7 +6,8 @@
  *
  * Environment variables (set in Vercel → Project → Settings → Environment Variables):
  *   RESEND_API_KEY  required  API key from the Resend dashboard
- *   CONTACT_TO      required  Inbox(es) that receive enquiries, comma-separated
+ *   CONTACT_TO      optional  Inbox(es) that receive enquiries, comma-separated.
+ *                             Defaults to the firm's email, keial.auditing@gmail.com.
  *   CONTACT_FROM    optional  Verified sender, e.g. "KEI-AL Website <web@kei.al>".
  *                             Defaults to Resend's test sender, which only
  *                             delivers to the Resend account owner's address.
@@ -23,6 +24,9 @@ const SERVICE_LABELS: Record<string, string> = {
   tax: 'Tatime & Këshillim Fiskal',
   other: 'Këshillim Biznesi & Ekspertizë Gjyqësore',
 };
+
+// Same address the site shows (src/config.ts). The function runs on the server, so it keeps its own copy.
+const DEFAULT_TO = 'keial.auditing@gmail.com';
 
 const LIMITS = { fullName: 120, companyName: 160, email: 200, message: 5000 };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -107,10 +111,10 @@ export default async function handler(req: Req, res: Res) {
   if (rateLimited(ip)) return send(res, 429, { ok: false, error: 'rate_limited' });
 
   const apiKey = process.env.RESEND_API_KEY;
-  const to = (process.env.CONTACT_TO ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+  const to = (process.env.CONTACT_TO || DEFAULT_TO).split(',').map((s) => s.trim()).filter(Boolean);
   const from = process.env.CONTACT_FROM || 'KEI-AL Website <onboarding@resend.dev>';
   if (!apiKey || to.length === 0) {
-    console.error('[contact] RESEND_API_KEY or CONTACT_TO is not set');
+    console.error('[contact] RESEND_API_KEY is not set');
     return send(res, 500, { ok: false, error: 'not_configured' });
   }
 

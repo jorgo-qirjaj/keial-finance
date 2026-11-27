@@ -1,11 +1,9 @@
 import { useMemo, useState } from 'react';
-import { MessageCircle } from 'lucide-react';
 import { Language } from '../types';
 import { content } from '../content';
-import { waLink } from '../config';
 import { salaryBreakdown, dividendBreakdown, RATES_2026 } from '../lib/tax';
 import { formatLek, numberLocale } from '../lib/format';
-import { Card, LinkButton, Section, SectionHeader } from './ui';
+import { Card, Section, SectionHeader } from './ui';
 import SegmentedControl from './arc/segmented-control/segmented-control';
 import { Input } from './arc/input/input';
 import { Slider } from './arc/slider/slider';
@@ -89,9 +87,6 @@ export function Calculator({ language }: { language: Language }) {
   const d = useMemo(() => dividendBreakdown(amounts.dividend), [amounts.dividend]);
   const fmt = (n: number) => formatLek(n, language);
 
-  const shareText = mode === 'salary'
-    ? t.shareSalary(fmt(s.gross), fmt(s.net), fmt(s.employerCost))
-    : t.shareDividend(fmt(d.gross), fmt(d.net));
 
   return (
     <Section id="calculator">
@@ -180,12 +175,6 @@ export function Calculator({ language }: { language: Language }) {
                 />
               </>
             )}
-            <div className="border-t border-rule pt-6">
-              <LinkButton href={waLink(shareText)} target="_blank" rel="noreferrer" variant="secondary">
-                <MessageCircle size={17} strokeWidth={2} className="text-[#1F8F55]" aria-hidden="true" />
-                {t.share}
-              </LinkButton>
-            </div>
           </div>
         </div>
       </Card>

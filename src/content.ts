@@ -43,8 +43,6 @@ export const content = {
     services: {
       title: 'Shërbimet',
       sub: 'Pesë fusha, nga mbajtja e librave deri te auditimi ligjor.',
-      ask: 'Pyesni për këtë shërbim',
-      askMessage: (service: string) => `Përshëndetje, dua informacion për shërbimin: ${service}.`,
       items: [
         {
           id: 'audit',
@@ -137,11 +135,6 @@ export const content = {
       divTax: 'Tatimi mbi dividentin (8%)',
       divNet: 'Dividenti neto',
       breakdown: 'Ku shkon çdo lek',
-      share: 'Dërgoni llogaritjen në WhatsApp',
-      shareSalary: (gross: string, net: string, cost: string) =>
-        `Përshëndetje, llogarita një pagë bruto ${gross} lekë: neto ${net} lekë, kosto totale ${cost} lekë. A mund të më ndihmoni?`,
-      shareDividend: (gross: string, net: string) =>
-        `Përshëndetje, llogarita një divident ${gross} lekë, neto ${net} lekë. A mund të më ndihmoni?`,
       belowMin: 'Nën pagën minimale. Kontributet llogariten mbi 50.000 lekë.',
       disclaimer: 'Vlerësim orientues me normat e 2026: paga minimale 50.000 lekë, tavani i kontributeve shoqërore 186.416 lekë.',
     },
@@ -223,8 +216,6 @@ export const content = {
     services: {
       title: 'Services',
       sub: 'Five practice areas, from bookkeeping to statutory audit.',
-      ask: 'Ask about this service',
-      askMessage: (service: string) => `Hello, I would like information about: ${service}.`,
       items: [
         {
           id: 'audit',
@@ -317,11 +308,6 @@ export const content = {
       divTax: 'Dividend tax (8%)',
       divNet: 'Net dividend',
       breakdown: 'Where each lek goes',
-      share: 'Send this to us on WhatsApp',
-      shareSalary: (gross: string, net: string, cost: string) =>
-        `Hello, I calculated a gross salary of ALL ${gross}: net ALL ${net}, total cost ALL ${cost}. Can you help?`,
-      shareDividend: (gross: string, net: string) =>
-        `Hello, I calculated a dividend of ALL ${gross}, net ALL ${net}. Can you help?`,
       belowMin: 'Below the minimum wage. Contributions are calculated on ALL 50,000.',
       disclaimer: 'Indicative estimate using 2026 rates: minimum wage ALL 50,000, social insurance ceiling ALL 186,416.',
     },

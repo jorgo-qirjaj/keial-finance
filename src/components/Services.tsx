@@ -1,10 +1,9 @@
 import { useRef, useState, type KeyboardEvent } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { BookOpen, Briefcase, Check, FileSearch, MessageCircle, Receipt, Users, type LucideIcon } from 'lucide-react';
+import { BookOpen, Briefcase, Check, FileSearch, Receipt, Users, type LucideIcon } from 'lucide-react';
 import { Language } from '../types';
 import { content } from '../content';
-import { waLink } from '../config';
-import { Card, LinkButton, Section, SectionHeader } from './ui';
+import { Card, Section, SectionHeader } from './ui';
 
 const ICONS: Record<string, LucideIcon> = {
   audit: FileSearch,
@@ -106,13 +105,6 @@ export function Services({ language }: { language: Language }) {
                     </li>
                   ))}
                 </ul>
-
-                <div className="mt-7 flex flex-wrap items-center gap-3 border-t border-rule pt-6">
-                  <LinkButton href={waLink(t.askMessage(active.title))} target="_blank" rel="noreferrer" variant="whatsapp">
-                    <MessageCircle size={17} strokeWidth={2} aria-hidden="true" />
-                    {t.ask}
-                  </LinkButton>
-                </div>
               </motion.div>
             </AnimatePresence>
           </div>

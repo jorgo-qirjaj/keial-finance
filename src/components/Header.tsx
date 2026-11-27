@@ -82,9 +82,11 @@ export function Header({ language, setLanguage }: HeaderProps) {
             options={LANGS}
             value={language}
             onValueChange={(v) => setLanguage(v as Language)}
+            className="seg-lang"
           />
           <span className="hidden md:block">
-            <LinkButton href={waLink(c.contact.whatsappMessage)} target="_blank" rel="noreferrer" className="h-10 px-4 text-[14px]">
+            {/* Fixed width so switching language does not shift the header. */}
+            <LinkButton href={waLink(c.contact.whatsappMessage)} target="_blank" rel="noreferrer" className="h-10 w-[148px] px-4 text-[14px]">
               <MessageCircle size={16} strokeWidth={2} aria-hidden="true" />
               {t.cta}
             </LinkButton>

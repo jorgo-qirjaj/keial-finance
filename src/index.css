@@ -92,6 +92,15 @@ h1, h2, h3 { text-wrap: balance; }
 
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
+/*
+ * Language switch (header): a pill with a navy fill on the chosen language, equal-width options,
+ * same height as the buttons beside it. Restyles the Arc segmented control through its markup.
+ */
+.seg-lang { border-radius: 9999px; background: #fff; border-color: var(--color-rule); }
+.seg-lang button { width: 40px; min-height: 32px; padding: 0; border-radius: 9999px; font-size: 13px; font-weight: 600; letter-spacing: .02em; color: var(--color-muted); }
+.seg-lang button[aria-pressed="true"] { color: #fff; }
+.seg-lang button > span[aria-hidden="true"] { background: var(--color-ink); border-color: var(--color-ink); box-shadow: none; }
+
 /* Card that lifts on hover, used for anything clickable. */
 .lift { transition: box-shadow .18s ease-out, transform .18s ease-out, border-color .18s ease-out; }
 .lift:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }

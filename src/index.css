@@ -2,64 +2,80 @@
 @import "./components/arc/foundation.css";
 
 /*
- * Bilanc design system for KEI-AL Auditing.
- * Navy ink on white, hairline rules, IBM Plex Sans for text and IBM Plex Mono for dates and figures.
- * One action colour (ink). Logo colours appear only in the logo mark.
+ * KEI-AL design system.
+ * Navy is the single action colour. The logo's olive, green and coral appear as quiet accents:
+ * status, chart series and the three-bar motif. White cards on a cool off-white page,
+ * hairline borders, soft navy-tinted shadows, 12px card radius, IBM Plex Sans + Plex Mono.
  */
 @theme {
   --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 
+  /* Navy (primary) */
   --color-ink: #14213D;
-  --color-ink-soft: #2A3856;
-  --color-sub: #4E5A6B;
-  --color-muted: #6B7685;
-  --color-rule: #DDE2E8;
-  --color-soft: #F4F6F8;
-  --color-paper: #FFFFFF;
-  --color-ledger: #2F6B47;
+  --color-ink-soft: #24345A;
+  --color-ink-deep: #0C1528;
+  /* Neutrals with a faint navy undertone */
+  --color-page: #F4F6F9;
+  --color-card: #FFFFFF;
+  --color-sub: #4A566A;
+  --color-muted: #6B7688;
+  --color-rule: #E2E7EE;
+  --color-soft: #EEF1F6;
+  /* Logo accents */
+  --color-olive: #B9B957;
+  --color-leaf: #357B52;
+  --color-leaf-bright: #4BBF77;
+  --color-coral: #E57455;
+  --color-coral-soft: #FCEDE8;
+  --color-leaf-soft: #E6F3EB;
+
+  --shadow-card: 0 1px 2px rgb(20 33 61 / .04), 0 1px 1px rgb(20 33 61 / .03);
+  --shadow-lift: 0 10px 28px rgb(20 33 61 / .09), 0 2px 6px rgb(20 33 61 / .05);
+  --shadow-float: 0 24px 60px rgb(8 15 32 / .28), 0 4px 14px rgb(8 15 32 / .14);
 }
 
-/* Map Arc UI tokens onto Bilanc so Arc components match the rest of the site. */
+/* Map Arc UI tokens onto KEI-AL so Arc components match the rest of the site. */
 :root {
   --background: #FFFFFF;
   --surface: #FFFFFF;
   --surface-raised: #FFFFFF;
-  --surface-muted: #F4F6F8;
+  --surface-muted: #EEF1F6;
   --foreground: #14213D;
-  --text-secondary: #4E5A6B;
-  --text-muted: #6B7685;
-  --border: #DDE2E8;
-  --border-subtle: #EBEEF2;
-  --border-strong: #B9C1CC;
+  --text-secondary: #4A566A;
+  --text-muted: #6B7688;
+  --border: #E2E7EE;
+  --border-subtle: #EDF0F4;
+  --border-strong: #B8C1CF;
   --accent: #14213D;
   --accent-strong: #0C1528;
   --accent-subtle: rgb(20 33 61 / .08);
   --accent-foreground: #FFFFFF;
   --control-on: #14213D;
-  --success: #2F6B47;
-  --danger: #B3392B;
+  --control-fill: #14213D;
+  --success: #357B52;
+  --danger: #C2462B;
   --font-display: "IBM Plex Sans", system-ui, sans-serif;
   --font-body: "IBM Plex Sans", system-ui, sans-serif;
-  --radius-control: 6px;
-  --radius-panel: 8px;
-  --radius-surface: 10px;
+  --radius-control: 8px;
+  --radius-panel: 12px;
+  --radius-surface: 16px;
   --tracking-display: -.01em;
   --tracking-body: 0;
   --leading-body: 1.5;
-  --shadow-raised: 0 4px 14px rgb(20 33 61 / .07), 0 1px 2px rgb(20 33 61 / .05);
-  --shadow-floating: 0 16px 40px rgb(20 33 61 / .12), 0 2px 8px rgb(20 33 61 / .06);
+  --shadow-raised: 0 10px 28px rgb(20 33 61 / .09), 0 2px 6px rgb(20 33 61 / .05);
+  --shadow-floating: 0 24px 60px rgb(20 33 61 / .16), 0 4px 14px rgb(20 33 61 / .08);
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 76px;
+  scroll-padding-top: 80px;
   -webkit-text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--color-paper);
+  background: var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -69,14 +85,19 @@ body {
 
 /* Reserve room for the mobile contact bar (App.tsx). */
 @media (max-width: 767px) {
-  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+  body { padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)); }
 }
 
 h1, h2, h3 { text-wrap: balance; }
 
 .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 
+/* Card that lifts on hover, used for anything clickable. */
+.lift { transition: box-shadow .18s ease-out, transform .18s ease-out, border-color .18s ease-out; }
+.lift:hover { box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .lift:hover { transform: none; }
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }

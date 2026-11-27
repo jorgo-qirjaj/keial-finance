@@ -1,116 +1,194 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState } from 'react';
+import { MessageCircle } from 'lucide-react';
 import { Language } from '../types';
 import { content } from '../content';
+import { waLink } from '../config';
 import { salaryBreakdown, dividendBreakdown, RATES_2026 } from '../lib/tax';
-import { Section, SectionHeader } from './ui';
+import { formatLek, numberLocale } from '../lib/format';
+import { Card, LinkButton, Section, SectionHeader } from './ui';
 import SegmentedControl from './arc/segmented-control/segmented-control';
 import { Input } from './arc/input/input';
+import { Slider } from './arc/slider/slider';
+import { AnimatedCounter } from './arc/animated-counter/animated-counter';
+import { Tooltip } from './arc/tooltip/tooltip';
 
-/** Lek amount field: digits only, shown with thousands separators. */
-function AmountInput({ id, label, value, onChange, locale, hint }: {
-  id: string; label: string; value: number; onChange: (n: number) => void; locale: string; hint?: string;
-}) {
+type Mode = 'salary' | 'dividend';
+
+const RANGE: Record<Mode, { min: number; max: number; step: number; presets: number[] }> = {
+  salary: { min: RATES_2026.minWage, max: 500_000, step: 1_000, presets: [60_000, 80_000, 120_000, 200_000] },
+  dividend: { min: 0, max: 20_000_000, step: 50_000, presets: [500_000, 1_000_000, 5_000_000] },
+};
+
+interface Segment { key: string; label: string; value: number; color: string }
+
+/** Horizontal stacked bar with a legend: where the money goes. */
+function Breakdown({ title, segments, language }: { title: string; segments: Segment[]; language: Language }) {
+  const total = segments.reduce((s, x) => s + x.value, 0) || 1;
   return (
-    <Input
-      id={id}
-      label={`${label} (ALL)`}
-      inputMode="numeric"
-      autoComplete="off"
-      className="num text-[18px]"
-      value={value ? value.toLocaleString(locale) : ''}
-      onChange={(e) => onChange(Number(e.target.value.replace(/\D/g, '')) || 0)}
-      description={hint}
-    />
+    <div>
+      <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted">{title}</p>
+      <div className="flex h-3.5 overflow-hidden rounded-full bg-soft">
+        {segments.filter((s) => s.value > 0).map((s) => (
+          <Tooltip key={s.key} content={`${s.label}: ${formatLek(s.value, language)} ALL`}>
+            <span
+              tabIndex={0}
+              aria-label={`${s.label}: ${formatLek(s.value, language)} ALL`}
+              className="h-full transition-[width] duration-300 ease-out first:rounded-l-full last:rounded-r-full outline-offset-2"
+              style={{ width: `${(s.value / total) * 100}%`, background: s.color }}
+            />
+          </Tooltip>
+        ))}
+      </div>
+      <ul className="mt-4 grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+        {segments.map((s) => (
+          <li key={s.key} className="flex items-center justify-between gap-3 text-[14px]">
+            <span className="flex min-w-0 items-center gap-2 text-sub">
+              <span aria-hidden="true" className="h-2.5 w-2.5 shrink-0 rounded-[3px]" style={{ background: s.color }} />
+              <span className="truncate">{s.label}</span>
+            </span>
+            <span className="num shrink-0 text-ink">
+              {formatLek(s.value, language)}
+              <span className="ml-1.5 text-muted">{Math.round((s.value / total) * 100)}%</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
-function Row({ label, value, strong = false, locale }: { label: string; value: number; strong?: boolean; locale: string }) {
+function Kpi({ label, value, language, emphasis = false }: { label: string; value: number; language: Language; emphasis?: boolean }) {
   return (
-    <tr className={`border-b border-rule last:border-0 ${strong ? 'font-semibold' : ''}`}>
-      <td className="py-2.5 pr-4">{label}</td>
-      <td className="num py-2.5 text-right whitespace-nowrap">{value.toLocaleString(locale)} ALL</td>
-    </tr>
-  );
-}
-
-function Ledger({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div className="min-w-0">
-      <h4 className="mb-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted">{title}</h4>
-      <table className="w-full text-[14.5px]"><tbody>{children}</tbody></table>
+    <div
+      className={`rounded-[12px] p-4 md:p-5 ${emphasis ? 'bg-ink text-white' : 'bg-page text-ink'}`}
+      // The Arc counter reads these tokens for its colour, face and size.
+      style={{
+        ['--foreground' as string]: emphasis ? '#FFFFFF' : '#14213D',
+        ['--font-display' as string]: 'var(--font-mono)',
+        ['--text-3xl' as string]: 'clamp(24px, 3vw, 30px)',
+      }}
+    >
+      <p className={`text-[13px] ${emphasis ? 'text-white/70' : 'text-muted'}`}>{label}</p>
+      <p className="num mt-1 text-[26px] md:text-[30px] font-medium leading-none">
+        <AnimatedCounter value={Math.round(value)} locale={numberLocale(language)} />
+        <span className={`ml-2 text-[14px] ${emphasis ? 'text-white/60' : 'text-muted'}`}>ALL</span>
+      </p>
     </div>
   );
 }
 
 export function Calculator({ language }: { language: Language }) {
   const t = content[language].tools;
-  const locale = language === 'sq' ? 'sq-AL' : 'en-US';
-  const [mode, setMode] = useState<'salary' | 'dividend'>('salary');
-  const [salary, setSalary] = useState(80_000);
-  const [dividend, setDividend] = useState(1_000_000);
+  const [mode, setMode] = useState<Mode>('salary');
+  const [amounts, setAmounts] = useState<Record<Mode, number>>({ salary: 80_000, dividend: 1_000_000 });
+  const amount = amounts[mode];
+  const range = RANGE[mode];
+  const setAmount = (n: number) => setAmounts((a) => ({ ...a, [mode]: Math.max(0, Math.min(n, 9_999_999_999)) }));
 
-  const s = useMemo(() => salaryBreakdown(salary), [salary]);
-  const d = useMemo(() => dividendBreakdown(dividend), [dividend]);
+  const s = useMemo(() => salaryBreakdown(amounts.salary), [amounts.salary]);
+  const d = useMemo(() => dividendBreakdown(amounts.dividend), [amounts.dividend]);
+  const fmt = (n: number) => formatLek(n, language);
+
+  const shareText = mode === 'salary'
+    ? t.shareSalary(fmt(s.gross), fmt(s.net), fmt(s.employerCost))
+    : t.shareDividend(fmt(d.gross), fmt(d.net));
 
   return (
     <Section id="calculator">
       <SectionHeader title={t.title} sub={t.sub} />
 
-      <div className="grid gap-10 rounded-[8px] border border-rule p-5 md:p-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-14">
-        <div className="min-w-0 space-y-6">
-          <SegmentedControl
-            label={t.title}
-            options={[
-              { value: 'salary', label: t.tabSalary },
-              { value: 'dividend', label: t.tabDividend },
-            ]}
-            value={mode}
-            onValueChange={(v) => setMode(v as 'salary' | 'dividend')}
-            fullWidth
-          />
-          {mode === 'salary' ? (
-            <AmountInput
-              id="salary"
-              label={t.salaryLabel}
-              value={salary}
-              onChange={(n) => setSalary(Math.min(n, 99_999_999))}
-              locale={locale}
-              hint={salary > 0 && salary < RATES_2026.minWage ? t.belowMin : undefined}
+      <Card className="overflow-hidden">
+        <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)]">
+          {/* Inputs */}
+          <div className="min-w-0 space-y-6 border-b border-rule p-5 md:p-8 lg:border-b-0 lg:border-r">
+            <SegmentedControl
+              label={t.title}
+              options={[{ value: 'salary', label: t.tabSalary }, { value: 'dividend', label: t.tabDividend }]}
+              value={mode}
+              onValueChange={(v) => setMode(v as Mode)}
+              fullWidth
             />
-          ) : (
-            <AmountInput
-              id="dividend"
-              label={t.dividendLabel}
-              value={dividend}
-              onChange={(n) => setDividend(Math.min(n, 9_999_999_999))}
-              locale={locale}
+            <Input
+              id={`amount-${mode}`}
+              label={`${mode === 'salary' ? t.salaryLabel : t.dividendLabel} (ALL)`}
+              inputMode="numeric"
+              autoComplete="off"
+              value={amount ? fmt(amount) : ''}
+              onChange={(e) => setAmount(Number(e.target.value.replace(/\D/g, '')) || 0)}
+              description={mode === 'salary' && amount > 0 && amount < RATES_2026.minWage ? t.belowMin : undefined}
             />
-          )}
-          <p className="text-[13px] text-muted">{t.disclaimer}</p>
-        </div>
-
-        {mode === 'salary' ? (
-          <div className="grid min-w-0 gap-8 sm:grid-cols-2">
-            <Ledger title={t.employee}>
-              <Row locale={locale} label={t.socialEmployee} value={s.socialEmployee} />
-              <Row locale={locale} label={t.healthEmployee} value={s.healthEmployee} />
-              <Row locale={locale} label={t.tap} value={s.tap} />
-              <Row locale={locale} label={t.net} value={s.net} strong />
-            </Ledger>
-            <Ledger title={t.employer}>
-              <Row locale={locale} label={t.socialEmployer} value={s.socialEmployer} />
-              <Row locale={locale} label={t.healthEmployer} value={s.healthEmployer} />
-              <Row locale={locale} label={t.employerCost} value={s.employerCost} strong />
-            </Ledger>
+            <Slider
+              label={mode === 'salary' ? t.salaryLabel : t.dividendLabel}
+              min={range.min}
+              max={range.max}
+              step={range.step}
+              value={Math.min(Math.max(amount, range.min), range.max)}
+              onValueChange={(v) => setAmount(v)}
+              format={(v) => fmt(v)}
+              showValue={false}
+            />
+            <div className="flex flex-wrap gap-2">
+              {range.presets.map((p) => (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => setAmount(p)}
+                  aria-pressed={amount === p}
+                  className={`num rounded-full border px-3 py-1.5 text-[13px] transition-colors ${
+                    amount === p ? 'border-ink bg-ink text-white' : 'border-rule bg-white text-sub hover:border-ink/40 hover:text-ink'
+                  }`}
+                >
+                  {fmt(p)}
+                </button>
+              ))}
+            </div>
+            <p className="text-[13px] leading-relaxed text-muted">{t.disclaimer}</p>
           </div>
-        ) : (
-          <Ledger title={t.tabDividend}>
-            <Row locale={locale} label={t.dividendLabel} value={d.gross} />
-            <Row locale={locale} label={t.divTax} value={d.tax} />
-            <Row locale={locale} label={t.divNet} value={d.net} strong />
-          </Ledger>
-        )}
-      </div>
+
+          {/* Results */}
+          <div className="min-w-0 space-y-7 bg-white p-5 md:p-8">
+            {mode === 'salary' ? (
+              <>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Kpi label={t.net} value={s.net} language={language} emphasis />
+                  <Kpi label={t.employerCost} value={s.employerCost} language={language} />
+                </div>
+                <Breakdown
+                  title={t.breakdown}
+                  language={language}
+                  segments={[
+                    { key: 'net', label: t.net, value: s.net, color: '#4BBF77' },
+                    { key: 'tap', label: t.tap, value: s.tap, color: '#E57455' },
+                    { key: 'emp', label: `${t.contributions}, ${t.employee.toLowerCase()}`, value: s.socialEmployee + s.healthEmployee, color: '#B9B957' },
+                    { key: 'er', label: `${t.contributions}, ${t.employer.toLowerCase()}`, value: s.socialEmployer + s.healthEmployer, color: '#24345A' },
+                  ]}
+                />
+              </>
+            ) : (
+              <>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Kpi label={t.divNet} value={d.net} language={language} emphasis />
+                  <Kpi label={t.divTax} value={d.tax} language={language} />
+                </div>
+                <Breakdown
+                  title={t.breakdown}
+                  language={language}
+                  segments={[
+                    { key: 'net', label: t.divNet, value: d.net, color: '#4BBF77' },
+                    { key: 'tax', label: t.divTax, value: d.tax, color: '#E57455' },
+                  ]}
+                />
+              </>
+            )}
+            <div className="border-t border-rule pt-6">
+              <LinkButton href={waLink(shareText)} target="_blank" rel="noreferrer" variant="secondary">
+                <MessageCircle size={17} strokeWidth={2} className="text-[#1F8F55]" aria-hidden="true" />
+                {t.share}
+              </LinkButton>
+            </div>
+          </div>
+        </div>
+      </Card>
     </Section>
   );
 }

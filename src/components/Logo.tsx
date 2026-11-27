@@ -1,20 +1,41 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import React from 'react';
+import logoImg from '../../images/logokeial-1.jpg';
+
 interface LogoProps {
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
+  darkBackground?: boolean;
 }
 
-/** Vector version of the KEI-AL mark (three bars) with the wordmark. */
-export function Logo({ className = '' }: LogoProps) {
+export function Logo({ className = '', size = 'md', darkBackground = false }: LogoProps) {
+  // Height classes appropriate for clean responsive alignment
+  const heightClass = size === 'lg' ? 'h-24' : size === 'sm' ? 'h-8' : 'h-12';
+
+  const imgElement = (
+    <img 
+      src={logoImg} 
+      alt="KEI-AL Auditing Logo" 
+      className={`${heightClass} object-contain`}
+      referrerPolicy="no-referrer"
+    />
+  );
+
+  if (darkBackground) {
+    return (
+      <div className={`inline-flex items-center bg-white p-2 md:p-3 rounded-xl shadow-md border border-white/20 hover:shadow-lg transition-shadow duration-300 ${className}`}>
+        {imgElement}
+      </div>
+    );
+  }
+
   return (
-    <span className={`inline-flex items-center gap-2.5 ${className}`}>
-      <svg width="28" height="24" viewBox="0 0 30 26" aria-hidden="true" className="shrink-0">
-        <rect x="0" y="5" width="8" height="21" fill="#C7D36B" />
-        <rect x="11" y="0" width="8" height="26" fill="#3F7D52" />
-        <rect x="22" y="2.5" width="8" height="23.5" fill="#D7704C" />
-      </svg>
-      <span className="flex flex-col leading-none">
-        <span className="font-semibold text-[17px] tracking-[0.02em] text-ink">KEI-AL</span>
-        <span className="text-[10px] tracking-[0.28em] uppercase text-muted mt-1">Auditing</span>
-      </span>
-    </span>
+    <div className={`inline-flex items-center ${className}`}>
+      {imgElement}
+    </div>
   );
 }

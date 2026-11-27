@@ -1,168 +1,111 @@
-import { useState, type FormEvent } from 'react';
-import { Language, ContactFormData } from '../types';
+import { useEffect, useState, type ReactNode } from 'react';
+import { Check, Clock, Copy, Mail, MapPin, MessageCircle, Phone, ArrowUpRight } from 'lucide-react';
+import { Language } from '../types';
 import { content } from '../content';
-import { CONTACT_EMAIL, WHATSAPP_URL, PHONE_MOBILE, PHONE_OFFICE, MAPS_URL } from '../config';
-import { Section, SectionHeader } from './ui';
-import { Input } from './arc/input/input';
-import { Textarea } from './arc/textarea/textarea';
-import { Select } from './arc/select/select';
-import { Button } from './arc/button/button';
+import { CONTACT_EMAIL, MAPS_URL, PHONE_MOBILE, PHONE_OFFICE, isOfficeOpen, waLink } from '../config';
+import { BarsMotif, Badge, Card, LinkButton, Section, SectionHeader } from './ui';
 
-type Status = 'idle' | 'loading' | 'success' | 'error' | 'sendError';
-const EMPTY: ContactFormData = { fullName: '', companyName: '', email: '', service: '', message: '' };
+/** Copies text and briefly confirms; falls back silently where the clipboard is unavailable. */
+function CopyButton({ text, label, done }: { text: string; label: string; done: string }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch { /* clipboard blocked: the text stays selectable */ }
+  }
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      aria-label={`${label}: ${text}`}
+      className="inline-flex h-8 items-center gap-1.5 rounded-full border border-rule px-2.5 text-[12.5px] text-sub transition-colors hover:border-ink/40 hover:text-ink"
+    >
+      {copied ? <Check size={14} strokeWidth={2.25} className="text-leaf" aria-hidden="true" /> : <Copy size={14} strokeWidth={1.75} aria-hidden="true" />}
+      <span aria-live="polite">{copied ? done : label}</span>
+    </button>
+  );
+}
+
+function InfoCard({ icon, title, children, action }: { icon: ReactNode; title: string; children: ReactNode; action?: ReactNode }) {
+  return (
+    <Card className="flex h-full flex-col p-5">
+      <div className="flex items-center justify-between gap-3">
+        <span className="flex items-center gap-2.5 text-[14px] font-medium text-muted">
+          <span className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-soft text-ink">{icon}</span>
+          {title}
+        </span>
+        {action}
+      </div>
+      <div className="mt-4 text-[16px] text-ink">{children}</div>
+    </Card>
+  );
+}
 
 export function Contact({ language }: { language: Language }) {
-  const c = content[language];
-  const t = c.contact;
-  const [form, setForm] = useState<ContactFormData>(EMPTY);
-  const [website, setWebsite] = useState(''); // honeypot
-  const [status, setStatus] = useState<Status>('idle');
-
-  const set = (key: keyof ContactFormData) => (value: string) => setForm((f) => ({ ...f, [key]: value }));
-  const missing = status === 'error';
-
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    if (!form.fullName.trim() || !form.email.trim() || !form.message.trim()) {
-      setStatus('error');
-      return;
-    }
-    setStatus('loading');
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...form, website }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok && data.ok) {
-        setStatus('success');
-        setForm(EMPTY);
-        return;
-      }
-      setStatus(res.status === 422 ? 'error' : 'sendError');
-    } catch {
-      setStatus('sendError');
-    }
-  }
-
-  const details = [
-    {
-      label: t.address,
-      body: (
-        <>
-          {t.addressText}
-          <br />
-          <a href={MAPS_URL} target="_blank" rel="noreferrer" className="text-[14px] text-ledger underline underline-offset-2">{t.mapLink}</a>
-        </>
-      ),
-    },
-    {
-      label: t.phone,
-      body: (
-        <>
-          <a href={`tel:${PHONE_MOBILE.replace(/\s/g, '')}`} className="num no-underline text-ink">{PHONE_MOBILE}</a>
-          <br />
-          <a href={`tel:${PHONE_OFFICE.replace(/\s/g, '')}`} className="num no-underline text-ink">{PHONE_OFFICE}</a>
-        </>
-      ),
-    },
-    { label: t.whatsapp, body: <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="num no-underline text-ink">{PHONE_MOBILE}</a> },
-    { label: t.email, body: <a href={`mailto:${CONTACT_EMAIL}`} className="no-underline text-ink break-all">{CONTACT_EMAIL}</a> },
-    { label: t.hours, body: t.hoursText },
-  ];
+  const t = content[language].contact;
+  const [open, setOpen] = useState(() => isOfficeOpen());
+  useEffect(() => {
+    const id = setInterval(() => setOpen(isOfficeOpen()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const tel = (n: string) => `tel:${n.replace(/\s/g, '')}`;
 
   return (
     <Section id="contact">
       <SectionHeader title={t.title} sub={t.sub} />
-      <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
-        <dl className="min-w-0 border-t border-ink/90">
-          {details.map((d) => (
-            <div key={d.label} className="grid grid-cols-[7rem_minmax(0,1fr)] gap-4 border-b border-rule py-4">
-              <dt className="text-[14px] text-muted">{d.label}</dt>
-              <dd className="text-[15px]">{d.body}</dd>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        {/* WhatsApp: the primary channel */}
+        <Card className="relative overflow-hidden border-ink bg-ink p-6 text-white lg:row-span-2 md:p-7">
+          <BarsMotif className="pointer-events-none absolute -right-12 -bottom-16 w-[260px]" opacity={0.14} />
+          <div className="relative flex h-full flex-col">
+            <span className="flex h-11 w-11 items-center justify-center rounded-[10px] bg-[#1F8F55]">
+              <MessageCircle size={22} strokeWidth={2} aria-hidden="true" />
+            </span>
+            <h3 className="mt-5 text-[22px] font-semibold">{t.whatsappTitle}</h3>
+            <p className="mt-2 max-w-[32ch] text-white/75">{t.whatsappText}</p>
+            <p className="num mt-5 text-[18px]">{PHONE_MOBILE}</p>
+            <div className="mt-auto pt-8">
+              <LinkButton href={waLink(t.whatsappMessage)} target="_blank" rel="noreferrer" variant="light" className="w-full sm:w-auto">
+                {t.whatsappCta}
+                <ArrowUpRight size={16} strokeWidth={2} aria-hidden="true" />
+              </LinkButton>
             </div>
-          ))}
-        </dl>
-
-        <form onSubmit={submit} noValidate className="relative min-w-0 space-y-5 rounded-[8px] border border-rule p-5 md:p-8">
-          <h3 className="text-[18px] font-semibold">{t.formTitle}</h3>
-
-          <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden">
-            <label htmlFor="website">Website</label>
-            <input id="website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
           </div>
+        </Card>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Input
-              id="fullName"
-              name="fullName"
-              label={t.formName}
-              autoComplete="name"
-              required
-              value={form.fullName}
-              onChange={(e) => set('fullName')(e.target.value)}
-              error={missing && !form.fullName.trim() ? t.required : undefined}
-            />
-            <Input
-              id="companyName"
-              name="companyName"
-              label={t.formCompany}
-              autoComplete="organization"
-              value={form.companyName}
-              onChange={(e) => set('companyName')(e.target.value)}
-            />
+        <InfoCard icon={<Phone size={16} strokeWidth={1.75} aria-hidden="true" />} title={t.phone}>
+          <div className="space-y-1.5">
+            <a href={tel(PHONE_MOBILE)} className="num block text-ink no-underline hover:underline">{PHONE_MOBILE}</a>
+            <a href={tel(PHONE_OFFICE)} className="num block text-ink no-underline hover:underline">{PHONE_OFFICE}</a>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              label={t.formEmail}
-              autoComplete="email"
-              required
-              value={form.email}
-              onChange={(e) => set('email')(e.target.value)}
-              error={missing && !form.email.trim() ? t.required : undefined}
-            />
-            <Select
-              id="service"
-              label={t.formService}
-              placeholder={t.formServicePh}
-              value={form.service}
-              onValueChange={set('service')}
-              options={c.services.items.map((s) => ({ value: s.id, label: s.title }))}
-            />
-          </div>
-          <Textarea
-            id="message"
-            name="message"
-            label={t.formMsg}
-            placeholder={t.formMsgPh}
-            rows={5}
-            required
-            value={form.message}
-            onChange={(e) => set('message')(e.target.value)}
-            error={missing && !form.message.trim() ? t.required : undefined}
-          />
+        </InfoCard>
 
-          <div role="status" aria-live="polite" className="text-[14px]">
-            {status === 'success' && <p className="rounded-[6px] bg-ledger/10 px-4 py-3 text-ledger">{t.formSuccess}</p>}
-            {status === 'error' && <p className="text-[#B3392B]">{t.formError}</p>}
-            {status === 'sendError' && (
-              <p className="rounded-[6px] bg-[#B3392B]/8 px-4 py-3 text-[#8E2A1F]">
-                {t.formSendError}{' '}
-                <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="font-medium underline">WhatsApp</a>
-                {' · '}
-                <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium underline">{CONTACT_EMAIL}</a>
-              </p>
-            )}
-          </div>
+        <InfoCard
+          icon={<Mail size={16} strokeWidth={1.75} aria-hidden="true" />}
+          title={t.email}
+          action={<CopyButton text={CONTACT_EMAIL} label={t.copy} done={t.copied} />}
+        >
+          <a href={`mailto:${CONTACT_EMAIL}`} className="break-all text-ink no-underline hover:underline">{CONTACT_EMAIL}</a>
+        </InfoCard>
 
-          <Button type="submit" size="lg" loading={status === 'loading'} className="w-full sm:w-auto">
-            {t.formSubmit}
-          </Button>
-        </form>
+        <InfoCard
+          icon={<Clock size={16} strokeWidth={1.75} aria-hidden="true" />}
+          title={t.hours}
+          action={<Badge tone={open ? 'leaf' : 'neutral'} dot>{open ? t.openNow : t.closedNow}</Badge>}
+        >
+          {t.hoursText}
+        </InfoCard>
+
+        <InfoCard icon={<MapPin size={16} strokeWidth={1.75} aria-hidden="true" />} title={t.address}>
+          <p>{t.addressText}</p>
+          <a href={MAPS_URL} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1 text-[14px] font-medium text-leaf no-underline hover:underline">
+            {t.mapLink}
+            <ArrowUpRight size={14} strokeWidth={2} aria-hidden="true" />
+          </a>
+        </InfoCard>
       </div>
     </Section>
   );

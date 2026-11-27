@@ -5,6 +5,16 @@ export interface Deadline {
   label: string;
   date: Date;
   daysLeft: number;
+  /** Length of the filing cycle in days, used to draw how far through it we are. */
+  cycleDays: number;
+}
+
+export type DeadlineStatus = 'today' | 'soon' | 'upcoming';
+
+export function deadlineStatus(daysLeft: number): DeadlineStatus {
+  if (daysLeft === 0) return 'today';
+  if (daysLeft <= 7) return 'soon';
+  return 'upcoming';
 }
 
 const DAY = 86_400_000;
@@ -39,10 +49,10 @@ export function upcomingDeadlines(t: Content, now = new Date()): Deadline[] {
   const qkb = nextYearly(today, 6, 31);
 
   return [
-    { key: 'vat', label: t.deadlineNames.vat(period(vat)), date: vat },
-    { key: 'payroll', label: t.deadlineNames.payroll(period(payroll)), date: payroll },
-    { key: 'profitTax', label: t.deadlineNames.profitTax, date: profitTax },
-    { key: 'qkb', label: t.deadlineNames.qkb, date: qkb },
+    { key: 'vat', label: t.deadlineNames.vat(period(vat)), date: vat, cycleDays: 30 },
+    { key: 'payroll', label: t.deadlineNames.payroll(period(payroll)), date: payroll, cycleDays: 30 },
+    { key: 'profitTax', label: t.deadlineNames.profitTax, date: profitTax, cycleDays: 365 },
+    { key: 'qkb', label: t.deadlineNames.qkb, date: qkb, cycleDays: 365 },
   ]
     .map((d) => ({ ...d, daysLeft: Math.round((d.date.getTime() - today.getTime()) / DAY) }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());

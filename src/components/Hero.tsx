@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
+import { ArrowRight, CalendarClock, MessageCircle } from 'lucide-react';
 import { Language } from '../types';
 import { content } from '../content';
-import { upcomingDeadlines, formatDate } from '../lib/deadlines';
-import { Container, LinkButton } from './ui';
+import { waLink, NIPT } from '../config';
+import { upcomingDeadlines } from '../lib/deadlines';
+import { BarsMotif, Container, LinkButton } from './ui';
+import { DeadlineRow } from './DeadlineRow';
 
 export function Hero({ language }: { language: Language }) {
   const c = content[language];
@@ -10,40 +13,63 @@ export function Hero({ language }: { language: Language }) {
   const deadlines = useMemo(() => upcomingDeadlines(c), [c]);
 
   return (
-    <section id="top" className="py-14 md:py-20">
-      <Container className="grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-16 items-start">
-        <div className="min-w-0">
-          <h1 className="text-[34px] md:text-[46px] font-semibold leading-[1.1] tracking-[-0.015em]">{t.title}</h1>
-          <p className="mt-5 max-w-[50ch] text-[17px] text-sub">{t.sub}</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <LinkButton href="#contact">{t.ctaPrimary}</LinkButton>
-            <LinkButton href="#services" variant="secondary">{t.ctaSecondary}</LinkButton>
-          </div>
-          <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 num text-[13px] text-muted">
-            {t.facts.map((f) => <li key={f}>{f}</li>)}
-          </ul>
-        </div>
+    <>
+      <section id="top" className="relative overflow-hidden bg-ink text-white">
+        {/* Soft depth and the logo's three bars, kept low-contrast. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(1200px_500px_at_85%_-10%,#24345A_0%,transparent_60%),linear-gradient(180deg,#14213D_0%,#0F1A33_100%)]" />
+        <BarsMotif className="pointer-events-none absolute -right-16 -bottom-24 w-[520px] max-w-none md:right-[-40px]" opacity={0.1} />
 
-        <div className="min-w-0 rounded-[8px] border border-rule">
-          <div className="flex items-baseline justify-between border-b border-rule px-5 py-3.5">
-            <h2 className="text-[15px] font-semibold">{t.deadlinesTitle}</h2>
-            <a href="#deadlines" className="text-[13px] text-sub no-underline hover:text-ink">→</a>
+        <Container className="relative grid items-center gap-12 pt-14 pb-28 md:pt-20 md:pb-36 lg:grid-cols-[1.15fr_1fr] lg:gap-16">
+          <div className="min-w-0">
+            <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[13px] text-white/80">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-leaf-bright" />
+              {t.eyebrow}
+            </p>
+            <h1 className="mt-6 text-[36px] md:text-[52px] font-semibold leading-[1.08] tracking-[-0.02em]">{t.title}</h1>
+            <p className="mt-5 max-w-[48ch] text-[17px] md:text-[18px] text-white/75">{t.sub}</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <LinkButton href={waLink(c.contact.whatsappMessage)} target="_blank" rel="noreferrer" variant="light">
+                <MessageCircle size={17} strokeWidth={2} aria-hidden="true" />
+                {t.ctaPrimary}
+              </LinkButton>
+              <LinkButton href="#services" variant="ghost-light">
+                {t.ctaSecondary}
+                <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+              </LinkButton>
+            </div>
+            <p className="num mt-8 text-[13px] text-white/55">NIPT {NIPT}</p>
           </div>
-          <table className="w-full text-[14px]">
-            <tbody>
-              {deadlines.map((d) => (
-                <tr key={d.key} className="border-b border-rule last:border-0">
-                  <td className="px-5 py-3 align-top">{d.label}</td>
-                  <td className="px-5 py-3 text-right align-top whitespace-nowrap">
-                    <span className="num block text-ledger font-medium">{formatDate(d.date)}</span>
-                    <span className="num block text-[12px] text-muted">{t.daysLeft(d.daysLeft)}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+
+          {/* Live widget: next filing dates, computed from today. */}
+          <div className="min-w-0 rounded-[16px] bg-white p-5 text-ink shadow-[var(--shadow-float)] md:p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-[15px] font-semibold">
+                <CalendarClock size={18} strokeWidth={1.75} className="text-leaf" aria-hidden="true" />
+                {t.deadlinesTitle}
+              </h2>
+              <a href="#deadlines" className="inline-flex items-center gap-1 text-[13px] text-sub no-underline hover:text-ink">
+                {t.deadlinesAll}
+                <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+              </a>
+            </div>
+            <ul className="mt-2 divide-y divide-rule">
+              {deadlines.map((d, i) => <DeadlineRow key={d.key} d={d} t={c} index={i} />)}
+            </ul>
+          </div>
+        </Container>
+      </section>
+
+      {/* Key facts, overlapping the hero edge. */}
+      <Container className="relative -mt-14 md:-mt-16">
+        <ul className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+          {c.stats.map((s) => (
+            <li key={s.label} className="rounded-[12px] border border-rule bg-white px-5 py-4 shadow-[var(--shadow-lift)]">
+              <p className="num text-[20px] md:text-[24px] font-medium text-ink">{s.value}</p>
+              <p className="mt-0.5 text-[13px] text-muted">{s.label}</p>
+            </li>
+          ))}
+        </ul>
       </Container>
-    </section>
+    </>
   );
 }

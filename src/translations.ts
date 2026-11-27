@@ -4,6 +4,7 @@
  */
 
 import { Language } from './types';
+import { CONTACT_EMAIL } from './config';
 
 export const translations = {
   sq: {
@@ -218,7 +219,7 @@ export const translations = {
       phoneLabel: "Telefon & WhatsApp",
       phoneText: "+355 68 209 5535 / 033 409 839",
       emailLabel: "Posta Elektronike",
-      emailText: "keial.auditing@gmail.com",
+      emailText: CONTACT_EMAIL,
       hoursLabel: "Orari i Punës",
       hoursText: "E Hënë – E Premte: 09:00 – 17:00",
       formTitle: "Dërgoni Mesazh të Shpejtë",
@@ -235,6 +236,7 @@ export const translations = {
       formSubmit: "Dërgo Mesazh",
       formSuccess: "Faleminderit! Mesazhi juaj u dërgua me sukses. Ekipi i KEI-AL do t'ju kontaktojë brenda 24 orëve të ardhshme.",
       formError: "Ju lutemi plotësoni të gjitha fushat e kërkuara me saktësi.",
+      formSendError: "Mesazhi nuk u dërgua për shkak të një problemi teknik. Ju lutemi provoni përsëri ose na shkruani direkt:",
       mapLabel: "Vendndodhja Jonë në Hartë (Vlorë)",
       whatsappAction: "Na kontaktoni direkt në WhatsApp"
     },
@@ -458,7 +460,7 @@ export const translations = {
       phoneLabel: "Phone & WhatsApp",
       phoneText: "+355 68 209 5535 / 033 409 839",
       emailLabel: "Email Address",
-      emailText: "keial.auditing@gmail.com",
+      emailText: CONTACT_EMAIL,
       hoursLabel: "Office Hours",
       hoursText: "Monday – Friday: 09:00 – 17:00",
       formTitle: "Send a Quick Message",
@@ -475,6 +477,7 @@ export const translations = {
       formSubmit: "Send Message",
       formSuccess: "Thank you! Your message has been sent successfully. The KEI-AL team will contact you within 24 hours.",
       formError: "Please fill in all required fields accurately.",
+      formSendError: "Your message could not be sent because of a technical problem. Please try again or contact us directly:",
       mapLabel: "Our Location on the Map (Vlorë)",
       whatsappAction: "Contact us directly via WhatsApp"
     },

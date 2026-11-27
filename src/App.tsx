@@ -13,13 +13,33 @@ import { Tools } from './components/Tools';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { Language } from './types';
+import { SITE_URL } from './config';
 import { MessageSquare, ArrowUp, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
-  // National default language in Albania is Albanian (sq)
-  const [language, setLanguage] = useState<Language>('sq');
+  // Albanian by default; https://kei.al/?lang=en opens the English version.
+  const [language, setLanguage] = useState<Language>(() =>
+    new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'sq'
+  );
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // Keep the URL, <html lang>, <title> and canonical link in step with the chosen language,
+  // so the English version has its own shareable, indexable address.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (language === 'en') url.searchParams.set('lang', 'en');
+    else url.searchParams.delete('lang');
+    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+
+    document.documentElement.lang = language;
+    document.title = language === 'en'
+      ? 'KEI-AL Auditing & Consulting | Audit, Accounting, Tax & Advisory in Vlorë, Albania'
+      : 'KEI-AL Auditing & Consulting | Auditim, Finance, Tatime, Konsulencë në Vlorë & Shqipëri';
+
+    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (canonical) canonical.href = language === 'en' ? `${SITE_URL}/?lang=en` : `${SITE_URL}/`;
+  }, [language]);
 
   // Monitor scroll for ScrollToTop capability
   useEffect(() => {

@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Mail, Phone, MapPin, Clock, MessageSquare, Send, CheckCircle2, AlertCircle, Facebook, Instagram } from 'lucide-react';
 import { Language, ContactFormData } from '../types';
 import { translations } from '../translations';
+import { CONTACT_EMAIL, WHATSAPP_URL } from '../config';
 
 interface ContactProps {
   language: Language;
@@ -25,7 +26,10 @@ export function Contact({ language }: ContactProps) {
     message: ''
   });
 
-  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  // 'error' = the visitor needs to fix a field; 'sendError' = the message could not be delivered.
+  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'sendError'>('idle');
+  // Honeypot field, hidden from people; bots that fill it are ignored by the server.
+  const [website, setWebsite] = useState('');
 
   // Input Handlers
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -33,34 +37,33 @@ export function Contact({ language }: ContactProps) {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Quick local validations
-    if (!formData.fullName || !formData.email || !formData.message) {
+
+    if (!formData.fullName.trim() || !formData.email.trim() || !formData.message.trim()) {
       setFormStatus('error');
       return;
     }
 
     setFormStatus('loading');
 
-    // Simulate API submission server delay
-    setTimeout(() => {
-      setFormStatus('success');
-      // Clear fields on success
-      setFormData({
-        fullName: '',
-        companyName: '',
-        email: '',
-        service: '',
-        message: ''
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, website }),
       });
-      
-      // Auto fade success message in 8s
-      setTimeout(() => {
-        setFormStatus('idle');
-      }, 8000);
-    }, 1500);
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.ok) {
+        setFormStatus('success');
+        setFormData({ fullName: '', companyName: '', email: '', service: '', message: '' });
+        return;
+      }
+      setFormStatus(res.status === 422 ? 'error' : 'sendError');
+    } catch {
+      setFormStatus('sendError');
+    }
   };
 
   return (
@@ -124,10 +127,10 @@ export function Contact({ language }: ContactProps) {
                   <h4 className="font-sans font-bold text-sm text-brand-dark mb-1">{t.emailLabel}</h4>
                   <p className="font-sans font-light text-sm text-brand-text-muted select-all">
                     <a 
-                      href={`mailto:${t.emailText}`} 
+                      href={`mailto:${CONTACT_EMAIL}`}
                       className="hover:text-brand-orange hover:underline transition-all duration-200"
                     >
-                      {t.emailText}
+                      {CONTACT_EMAIL}
                     </a>
                   </p>
                 </div>
@@ -202,6 +205,20 @@ export function Contact({ language }: ContactProps) {
             </div>
 
             <form onSubmit={handleFormSubmit} className="space-y-5">
+
+              {/* Honeypot: visually hidden, skipped by keyboard and screen readers */}
+              <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
+                <label htmlFor="website">Website</label>
+                <input
+                  id="website"
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                />
+              </div>
               
               {/* Row 1: Name and Company */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -315,6 +332,24 @@ export function Contact({ language }: ContactProps) {
                   >
                     <AlertCircle className="w-5 h-5 shrink-0" />
                     <span>{t.formError}</span>
+                  </motion.div>
+                )}
+
+                {formStatus === 'sendError' && (
+                  <motion.div
+                    role="alert"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="p-4 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-medium flex items-start gap-2.5"
+                  >
+                    <AlertCircle className="w-5 h-5 shrink-0" />
+                    <span>
+                      {t.formSendError}{' '}
+                      <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="underline font-bold">WhatsApp</a>
+                      {' · '}
+                      <a href={`mailto:${CONTACT_EMAIL}`} className="underline font-bold">{CONTACT_EMAIL}</a>
+                    </span>
                   </motion.div>
                 )}
               </AnimatePresence>

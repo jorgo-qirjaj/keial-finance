@@ -1,381 +1,169 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, MapPin, Clock, MessageSquare, Send, CheckCircle2, AlertCircle, Facebook, Instagram } from 'lucide-react';
+import { useState, type FormEvent } from 'react';
 import { Language, ContactFormData } from '../types';
-import { translations } from '../translations';
-import { CONTACT_EMAIL, WHATSAPP_URL } from '../config';
+import { content } from '../content';
+import { CONTACT_EMAIL, WHATSAPP_URL, PHONE_MOBILE, PHONE_OFFICE, MAPS_URL } from '../config';
+import { Section, SectionHeader } from './ui';
+import { Input } from './arc/input/input';
+import { Textarea } from './arc/textarea/textarea';
+import { Select } from './arc/select/select';
+import { Button } from './arc/button/button';
 
-interface ContactProps {
-  language: Language;
-}
+type Status = 'idle' | 'loading' | 'success' | 'error' | 'sendError';
+const EMPTY: ContactFormData = { fullName: '', companyName: '', email: '', service: '', message: '' };
 
-export function Contact({ language }: ContactProps) {
-  const t = translations[language].contact;
-  
-  // State
-  const [formData, setFormData] = useState<ContactFormData>({
-    fullName: '',
-    companyName: '',
-    email: '',
-    service: '',
-    message: ''
-  });
+export function Contact({ language }: { language: Language }) {
+  const c = content[language];
+  const t = c.contact;
+  const [form, setForm] = useState<ContactFormData>(EMPTY);
+  const [website, setWebsite] = useState(''); // honeypot
+  const [status, setStatus] = useState<Status>('idle');
 
-  // 'error' = the visitor needs to fix a field; 'sendError' = the message could not be delivered.
-  const [formStatus, setFormStatus] = useState<'idle' | 'loading' | 'success' | 'error' | 'sendError'>('idle');
-  // Honeypot field, hidden from people; bots that fill it are ignored by the server.
-  const [website, setWebsite] = useState('');
+  const set = (key: keyof ContactFormData) => (value: string) => setForm((f) => ({ ...f, [key]: value }));
+  const missing = status === 'error';
 
-  // Input Handlers
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  async function submit(e: FormEvent) {
     e.preventDefault();
-
-    if (!formData.fullName.trim() || !formData.email.trim() || !formData.message.trim()) {
-      setFormStatus('error');
+    if (!form.fullName.trim() || !form.email.trim() || !form.message.trim()) {
+      setStatus('error');
       return;
     }
-
-    setFormStatus('loading');
-
+    setStatus('loading');
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, website }),
+        body: JSON.stringify({ ...form, website }),
       });
       const data = await res.json().catch(() => ({}));
-
       if (res.ok && data.ok) {
-        setFormStatus('success');
-        setFormData({ fullName: '', companyName: '', email: '', service: '', message: '' });
+        setStatus('success');
+        setForm(EMPTY);
         return;
       }
-      setFormStatus(res.status === 422 ? 'error' : 'sendError');
+      setStatus(res.status === 422 ? 'error' : 'sendError');
     } catch {
-      setFormStatus('sendError');
+      setStatus('sendError');
     }
-  };
+  }
+
+  const details = [
+    {
+      label: t.address,
+      body: (
+        <>
+          {t.addressText}
+          <br />
+          <a href={MAPS_URL} target="_blank" rel="noreferrer" className="text-[14px] text-ledger underline underline-offset-2">{t.mapLink}</a>
+        </>
+      ),
+    },
+    {
+      label: t.phone,
+      body: (
+        <>
+          <a href={`tel:${PHONE_MOBILE.replace(/\s/g, '')}`} className="num no-underline text-ink">{PHONE_MOBILE}</a>
+          <br />
+          <a href={`tel:${PHONE_OFFICE.replace(/\s/g, '')}`} className="num no-underline text-ink">{PHONE_OFFICE}</a>
+        </>
+      ),
+    },
+    { label: t.whatsapp, body: <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="num no-underline text-ink">{PHONE_MOBILE}</a> },
+    { label: t.email, body: <a href={`mailto:${CONTACT_EMAIL}`} className="no-underline text-ink break-all">{CONTACT_EMAIL}</a> },
+    { label: t.hours, body: t.hoursText },
+  ];
 
   return (
-    <section id="contact" className="py-20 md:py-28 bg-transparent relative">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        
-        {/* Section Headers */}
-        <div className="max-w-xl mb-16">
-          <span className="font-sans font-bold text-xs tracking-[0.2em] text-brand-orange uppercase mb-4 block">
-            {t.tag}
-          </span>
-          <h2 className="font-serif font-black text-3xl md:text-4xl text-brand-dark leading-tight tracking-tight mb-4">
-            {t.title}
-          </h2>
-          <p className="font-sans font-light text-base text-brand-text-muted leading-relaxed">
-            {t.sub}
-          </p>
-        </div>
-
-        {/* Form & Coordinates Dual Column */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Left Side: Coordinates Grid (Cols 5) */}
-          <div className="lg:col-span-5 space-y-10">
-            
-            {/* Practical details boxes */}
-            <div className="space-y-6">
-              
-              {/* Address */}
-              <div className="flex gap-4 items-start">
-                <div className="w-11 h-11 rounded-xl bg-white/40 border border-white/50 backdrop-blur-sm flex items-center justify-center text-brand-orange shrink-0 shadow-inner">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-sans font-bold text-sm text-brand-dark mb-1">{t.addressLabel}</h4>
-                  <p className="font-sans font-light text-sm text-brand-text-muted leading-relaxed">
-                    {t.addressText}
-                  </p>
-                </div>
-              </div>
-
-              {/* Phone */}
-              <div className="flex gap-4 items-start">
-                <div className="w-11 h-11 rounded-xl bg-white/40 border border-white/50 backdrop-blur-sm flex items-center justify-center text-brand-orange shrink-0 shadow-inner">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-sans font-bold text-sm text-brand-dark mb-1">{t.phoneLabel}</h4>
-                  <p className="font-sans font-light text-sm text-brand-text-muted leading-relaxed">
-                    {t.phoneText}
-                  </p>
-                </div>
-              </div>
-
-              {/* Email */}
-              <div className="flex gap-4 items-start">
-                <div className="w-11 h-11 rounded-xl bg-white/40 border border-white/50 backdrop-blur-sm flex items-center justify-center text-brand-orange shrink-0 shadow-inner">
-                  <Mail className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-sans font-bold text-sm text-brand-dark mb-1">{t.emailLabel}</h4>
-                  <p className="font-sans font-light text-sm text-brand-text-muted select-all">
-                    <a 
-                      href={`mailto:${CONTACT_EMAIL}`}
-                      className="hover:text-brand-orange hover:underline transition-all duration-200"
-                    >
-                      {CONTACT_EMAIL}
-                    </a>
-                  </p>
-                </div>
-              </div>
-
-              {/* Clock Hours */}
-              <div className="flex gap-4 items-start">
-                <div className="w-11 h-11 rounded-xl bg-white/40 border border-white/50 backdrop-blur-sm flex items-center justify-center text-brand-orange shrink-0 shadow-inner">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-sans font-bold text-sm text-brand-dark mb-1">{t.hoursLabel}</h4>
-                  <p className="font-sans font-light text-sm text-brand-text-muted">
-                    {t.hoursText}
-                  </p>
-                </div>
-              </div>
-
+    <Section id="contact">
+      <SectionHeader title={t.title} sub={t.sub} />
+      <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
+        <dl className="min-w-0 border-t border-ink/90">
+          {details.map((d) => (
+            <div key={d.label} className="grid grid-cols-[7rem_minmax(0,1fr)] gap-4 border-b border-rule py-4">
+              <dt className="text-[14px] text-muted">{d.label}</dt>
+              <dd className="text-[15px]">{d.body}</dd>
             </div>
+          ))}
+        </dl>
 
-            {/* Social Channels Quick links */}
-            <div className="flex flex-wrap gap-3">
-              <a 
-                href="https://www.facebook.com/keialauditing" 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/40 hover:border-brand-orange text-brand-dark text-xs font-bold bg-white/30 backdrop-blur-sm hover:bg-brand-orange/5 transition-all group"
-              >
-                <Facebook className="w-4 h-4 text-brand-dark group-hover:text-brand-orange transition-colors duration-200" />
-                <span>Facebook</span>
-              </a>
-              <a 
-                href="https://www.instagram.com/keialauditing" 
-                target="_blank" 
-                rel="noreferrer"
-                className="flex items-center gap-2 px-5 py-3 rounded-full border border-white/40 hover:border-brand-orange text-brand-dark text-xs font-bold bg-white/30 backdrop-blur-sm hover:bg-brand-orange/5 transition-all group"
-              >
-                <Instagram className="w-4 h-4 text-brand-dark group-hover:text-brand-orange transition-colors duration-200" />
-                <span>Instagram</span>
-              </a>
-            </div>
+        <form onSubmit={submit} noValidate className="relative min-w-0 space-y-5 rounded-[8px] border border-rule p-5 md:p-8">
+          <h3 className="text-[18px] font-semibold">{t.formTitle}</h3>
 
-            {/* Google map iframe wrapper */}
-            <div className="rounded-2xl overflow-hidden glass-card shadow-lg">
-              <div className="bg-white/40 px-4 py-2 border-b border-[#E5E2DC]/50 flex items-center justify-between text-xs font-bold text-brand-text-muted backdrop-blur-sm">
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-brand-orange" />
-                  <span>{t.mapLabel}</span>
-                </div>
-                <span className="w-2 h-2 rounded-full bg-brand-orange animate-pulse" />
-              </div>
-              <iframe
-                title="KEI-AL Auditing Office Location Map"
-                src="https://maps.google.com/maps?q=Lagjja%2029%20Nentori%2C%20Vlore%2C%20Albania&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                width="100%"
-                height="220"
-                style={{ border: 0 }}
-                allowFullScreen={false}
-                loading="lazy"
-              />
-            </div>
-
+          <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden">
+            <label htmlFor="website">Website</label>
+            <input id="website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
           </div>
 
-          {/* Right Side: Interactive Client inquiry Form (Cols 7) */}
-          <div className="lg:col-span-7 glass-card rounded-3xl p-6 md:p-8 shadow-xl shadow-brand-dark/5">
-            <div className="flex items-center gap-2 mb-6">
-              <MessageSquare className="w-5 h-5 text-brand-orange" />
-              <h3 className="font-serif font-black text-lg md:text-xl text-brand-dark">
-                {t.formTitle}
-              </h3>
-            </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Input
+              id="fullName"
+              name="fullName"
+              label={t.formName}
+              autoComplete="name"
+              required
+              value={form.fullName}
+              onChange={(e) => set('fullName')(e.target.value)}
+              error={missing && !form.fullName.trim() ? t.required : undefined}
+            />
+            <Input
+              id="companyName"
+              name="companyName"
+              label={t.formCompany}
+              autoComplete="organization"
+              value={form.companyName}
+              onChange={(e) => set('companyName')(e.target.value)}
+            />
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              label={t.formEmail}
+              autoComplete="email"
+              required
+              value={form.email}
+              onChange={(e) => set('email')(e.target.value)}
+              error={missing && !form.email.trim() ? t.required : undefined}
+            />
+            <Select
+              id="service"
+              label={t.formService}
+              placeholder={t.formServicePh}
+              value={form.service}
+              onValueChange={set('service')}
+              options={c.services.items.map((s) => ({ value: s.id, label: s.title }))}
+            />
+          </div>
+          <Textarea
+            id="message"
+            name="message"
+            label={t.formMsg}
+            placeholder={t.formMsgPh}
+            rows={5}
+            required
+            value={form.message}
+            onChange={(e) => set('message')(e.target.value)}
+            error={missing && !form.message.trim() ? t.required : undefined}
+          />
 
-            <form onSubmit={handleFormSubmit} className="space-y-5">
-
-              {/* Honeypot: visually hidden, skipped by keyboard and screen readers */}
-              <div aria-hidden="true" style={{ position: 'absolute', left: '-10000px', width: 1, height: 1, overflow: 'hidden' }}>
-                <label htmlFor="website">Website</label>
-                <input
-                  id="website"
-                  type="text"
-                  name="website"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
-                />
-              </div>
-              
-              {/* Row 1: Name and Company */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label htmlFor="fullName" className="font-sans font-bold text-xs text-brand-mid block">
-                    {t.formName} *
-                  </label>
-                  <input
-                    id="fullName"
-                    type="text"
-                    name="fullName"
-                    required
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    placeholder={t.formNamePh}
-                    className="w-full px-4 py-3 rounded-xl glass-input text-brand-dark font-sans text-sm focus:border-brand-orange focus:bg-white outline-none transition-all shadow-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="companyName" className="font-sans font-bold text-xs text-brand-mid block">
-                    {t.formCompany}
-                  </label>
-                  <input
-                    id="companyName"
-                    type="text"
-                    name="companyName"
-                    value={formData.companyName}
-                    onChange={handleInputChange}
-                    placeholder={t.formCompanyPh}
-                    className="w-full px-4 py-3 rounded-xl glass-input text-brand-dark font-sans text-sm focus:border-brand-orange focus:bg-white outline-none transition-all shadow-sm"
-                  />
-                </div>
-              </div>
-
-              {/* Row 2: Email and Service select */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label htmlFor="email" className="font-sans font-bold text-xs text-brand-mid block">
-                    {t.formEmail} *
-                  </label>
-                  <input
-                    id="email"
-                    type="email"
-                    name="email"
-                    required
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    placeholder={t.formEmailPh}
-                    className="w-full px-4 py-3 rounded-xl glass-input text-brand-dark font-sans text-sm focus:border-brand-orange focus:bg-white outline-none transition-all shadow-sm"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="service" className="font-sans font-bold text-xs text-brand-mid block">
-                    {t.formService}
-                  </label>
-                  <select
-                    id="service"
-                    name="service"
-                    value={formData.service}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-xl glass-input text-brand-dark font-sans text-sm focus:border-brand-orange focus:bg-white outline-none transition-all shadow-sm appearance-none"
-                    style={{ backgroundImage: "url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236B6B80%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')", backgroundRepeat: 'no-repeat', backgroundPosition: 'right 14px top 50%', backgroundSize: '10px' }}
-                  >
-                    <option value="">{t.formServicePh}</option>
-                    <option value="accounting">{translations[language].services.items[0].title}</option>
-                    <option value="audit">{translations[language].services.items[1].title}</option>
-                    <option value="payroll">{translations[language].services.items[2].title}</option>
-                    <option value="tax">{translations[language].services.items[3].title}</option>
-                    <option value="other">{translations[language].services.items[4].title}</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Message field */}
-              <div className="space-y-1.5">
-                <label htmlFor="message" className="font-sans font-bold text-xs text-brand-mid block">
-                  {t.formMsg} *
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={4}
-                  value={formData.message}
-                  onChange={handleInputChange}
-                  placeholder={t.formMsgPh}
-                  className="w-full px-4 py-3 rounded-xl glass-input text-brand-dark font-sans text-sm focus:border-brand-orange focus:bg-white outline-none resize-y transition-all shadow-sm"
-                />
-              </div>
-
-              {/* Status Signals Alerts */}
-              <AnimatePresence mode="wait">
-                {formStatus === 'success' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="p-4 rounded-xl bg-[#3DAA6A]/10 border border-[#3DAA6A]/20 text-[#3DAA6A] text-xs font-medium flex items-start gap-2.5"
-                  >
-                    <CheckCircle2 className="w-5 h-5 shrink-0" />
-                    <span>{t.formSuccess}</span>
-                  </motion.div>
-                )}
-
-                {formStatus === 'error' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="p-4 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-medium flex items-start gap-2.5"
-                  >
-                    <AlertCircle className="w-5 h-5 shrink-0" />
-                    <span>{t.formError}</span>
-                  </motion.div>
-                )}
-
-                {formStatus === 'sendError' && (
-                  <motion.div
-                    role="alert"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="p-4 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-brand-orange text-xs font-medium flex items-start gap-2.5"
-                  >
-                    <AlertCircle className="w-5 h-5 shrink-0" />
-                    <span>
-                      {t.formSendError}{' '}
-                      <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="underline font-bold">WhatsApp</a>
-                      {' · '}
-                      <a href={`mailto:${CONTACT_EMAIL}`} className="underline font-bold">{CONTACT_EMAIL}</a>
-                    </span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Submit trigger button */}
-              <button
-                type="submit"
-                disabled={formStatus === 'loading'}
-                className="w-full py-4 mt-2 rounded-xl bg-brand-dark hover:bg-brand-orange disabled:bg-brand-text-muted text-brand-white font-bold text-sm tracking-wide transition-all shadow-lg hover:shadow-brand-orange/10 cursor-pointer flex items-center justify-center gap-2"
-              >
-                {formStatus === 'loading' ? (
-                  <span className="w-5 h-5 border-2 border-brand-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    <span>{t.formSubmit}</span>
-                  </>
-                )}
-              </button>
-
-            </form>
+          <div role="status" aria-live="polite" className="text-[14px]">
+            {status === 'success' && <p className="rounded-[6px] bg-ledger/10 px-4 py-3 text-ledger">{t.formSuccess}</p>}
+            {status === 'error' && <p className="text-[#B3392B]">{t.formError}</p>}
+            {status === 'sendError' && (
+              <p className="rounded-[6px] bg-[#B3392B]/8 px-4 py-3 text-[#8E2A1F]">
+                {t.formSendError}{' '}
+                <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="font-medium underline">WhatsApp</a>
+                {' · '}
+                <a href={`mailto:${CONTACT_EMAIL}`} className="font-medium underline">{CONTACT_EMAIL}</a>
+              </p>
+            )}
           </div>
 
-        </div>
-
+          <Button type="submit" size="lg" loading={status === 'loading'} className="w-full sm:w-auto">
+            {t.formSubmit}
+          </Button>
+        </form>
       </div>
-    </section>
+    </Section>
   );
 }

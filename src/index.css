@@ -1,62 +1,82 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
+@import "./components/arc/foundation.css";
 
+/*
+ * Bilanc design system for KEI-AL Auditing.
+ * Navy ink on white, hairline rules, IBM Plex Sans for text and IBM Plex Mono for dates and figures.
+ * One action colour (ink). Logo colours appear only in the logo mark.
+ */
 @theme {
-  --font-serif: "Lora", Georgia, serif;
-  --font-sans: "Inter", system-ui, sans-serif;
-  
-  --color-brand-orange: #EC7A55; /* Official Vibrant Coral Orange */
-  --color-brand-purple: #3BBA74; /* Official Vibrant Emerald Green */
-  --color-brand-dark: #0B1329;   /* Refined Midnight Obsidian */
-  --color-brand-mid: #1E293B;    /* Slate Blue */
-  --color-brand-light: #FBFBFA;  /* Off-White Warm Canvas */
-  --color-brand-white: #FFFFFF;
-  --color-brand-border: #E5E2DC;  /* Warm Light Gray */
-  --color-brand-text-muted: #6B7280;
+  --font-sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  --color-ink: #14213D;
+  --color-ink-soft: #2A3856;
+  --color-sub: #4E5A6B;
+  --color-muted: #6B7685;
+  --color-rule: #DDE2E8;
+  --color-soft: #F4F6F8;
+  --color-paper: #FFFFFF;
+  --color-ledger: #2F6B47;
 }
 
-@utility glass-card {
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+/* Map Arc UI tokens onto Bilanc so Arc components match the rest of the site. */
+:root {
+  --background: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-muted: #F4F6F8;
+  --foreground: #14213D;
+  --text-secondary: #4E5A6B;
+  --text-muted: #6B7685;
+  --border: #DDE2E8;
+  --border-subtle: #EBEEF2;
+  --border-strong: #B9C1CC;
+  --accent: #14213D;
+  --accent-strong: #0C1528;
+  --accent-subtle: rgb(20 33 61 / .08);
+  --accent-foreground: #FFFFFF;
+  --control-on: #14213D;
+  --success: #2F6B47;
+  --danger: #B3392B;
+  --font-display: "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --radius-control: 6px;
+  --radius-panel: 8px;
+  --radius-surface: 10px;
+  --tracking-display: -.01em;
+  --tracking-body: 0;
+  --leading-body: 1.5;
+  --shadow-raised: 0 4px 14px rgb(20 33 61 / .07), 0 1px 2px rgb(20 33 61 / .05);
+  --shadow-floating: 0 16px 40px rgb(20 33 61 / .12), 0 2px 8px rgb(20 33 61 / .06);
 }
 
-@utility glass-nav {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.45);
-}
-
-@utility glass-dark-card {
-  background: rgba(11, 19, 41, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-}
-
-@utility glass-input {
-  background: rgba(255, 255, 255, 0.35);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-}
-
-/* Custom smooth scroll behavior for modern navigation */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px;
+  scroll-padding-top: 76px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background-color: #FBFBFA;
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(59, 186, 116, 0.03) 0%, transparent 45%),
-    radial-gradient(circle at 90% 80%, rgba(236, 122, 85, 0.03) 0%, transparent 45%);
-  background-attachment: fixed;
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
+/* Reserve room for the mobile contact bar (App.tsx). */
+@media (max-width: 767px) {
+  body { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+}
 
+h1, h2, h3 { text-wrap: balance; }
+
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

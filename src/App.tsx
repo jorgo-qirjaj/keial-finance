@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { MessageCircle, Phone } from 'lucide-react';
 import { Language } from './types';
 import { content } from './content';
-import { SITE_URL, PHONE_MOBILE, waLink } from './config';
+import { PHONE_MOBILE, waLink } from './config';
+import { SEO, canonicalUrl } from './lib/seo';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Services } from './components/Services';
@@ -12,27 +13,24 @@ import { Deadlines } from './components/Deadlines';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 
-export default function App() {
-  // Albanian by default; https://kei.al/?lang=en opens the English version.
-  const [language, setLanguage] = useState<Language>(() =>
-    new URLSearchParams(window.location.search).get('lang') === 'en' ? 'en' : 'sq'
-  );
+/**
+ * Albanian lives at /, English at /en/. Both are pre-rendered to static HTML at build time
+ * (scripts/prerender.mjs), so `initialLanguage` comes from the page's address.
+ */
+export default function App({ initialLanguage }: { initialLanguage: Language }) {
+  const [language, setLanguage] = useState<Language>(initialLanguage);
   const c = content[language];
 
-  // Keep the URL, <html lang>, <title> and canonical link in step with the chosen language.
+  // When the visitor switches language, move to that language's address and update the head to match.
   useEffect(() => {
-    const url = new URL(window.location.href);
-    if (language === 'en') url.searchParams.set('lang', 'en');
-    else url.searchParams.delete('lang');
-    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
-
+    const seo = SEO[language];
+    if (window.location.pathname !== seo.path || window.location.search) {
+      window.history.replaceState(null, '', seo.path + window.location.hash);
+    }
     document.documentElement.lang = language;
-    document.title = language === 'en'
-      ? 'KEI-AL Auditing | Audit, Accounting and Tax in Vlorë, Albania'
-      : 'KEI-AL Auditing | Auditim, Kontabilitet dhe Tatime në Vlorë';
-
-    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (canonical) canonical.href = language === 'en' ? `${SITE_URL}/?lang=en` : `${SITE_URL}/`;
+    document.title = seo.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', seo.description);
+    document.querySelector('link[rel="canonical"]')?.setAttribute('href', canonicalUrl(language));
   }, [language]);
 
   return (
